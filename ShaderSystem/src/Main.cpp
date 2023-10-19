@@ -223,23 +223,24 @@ int main(int argc, char* argv[])
 	//       And OS functions are slow.
 	delete[] vertices;
 
-	ShaderSystem::Renderer::Shutdown();
-	ShaderSystem::Logger::Shutdown();
+	Renderer::Shutdown();
+	Logger::Shutdown();
 	return 0;
 }
 
-static bool onEvent(ShaderSystem::Event& e)
+static bool onEvent(Event& e)
 {
-	ShaderSystem::EventDispatcher dispatcher(e);
-	dispatcher.Dispatch<ShaderSystem::WindowCloseEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowClose));
-	dispatcher.Dispatch<ShaderSystem::WindowResizeEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowResize));
+	EventDispatcher dispatcher(e);
+	dispatcher.Dispatch<WindowCloseEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowClose));
+	dispatcher.Dispatch<WindowResizeEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowResize));
+	
+	fpsCamera->OnEvent(e);
 	return false;
 }
 
 static bool onWindowResize(ShaderSystem::WindowResizeEvent& e)
 {
 	SHADER_SYSTEM_INFO("Received application resize event to size {0}x{1}.", e.GetWidth(), e.GetHeight());
-	fpsCamera->OnWindowResize(e);
 	return false;
 }
 

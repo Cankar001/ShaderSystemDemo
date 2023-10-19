@@ -18,6 +18,7 @@
 using namespace ShaderSystem;
 
 static bool sRunning = false;
+static Ref<FPSCamera> fpsCamera;
 static bool onEvent(Event& e);
 static bool onWindowResize(WindowResizeEvent& e);
 static bool onWindowClose(WindowCloseEvent& e);
@@ -88,7 +89,7 @@ int main(int argc, char* argv[])
 	Renderer::Init();
 
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
-	Ref<FPSCamera> fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
+	fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
 
 	glm::vec4 quadColor(1.0f, 0.0f, 0.0f, 1.0f);
 
@@ -238,6 +239,7 @@ static bool onEvent(ShaderSystem::Event& e)
 static bool onWindowResize(ShaderSystem::WindowResizeEvent& e)
 {
 	SHADER_SYSTEM_INFO("Received application resize event to size {0}x{1}.", e.GetWidth(), e.GetHeight());
+	fpsCamera->OnWindowResize(e);
 	return false;
 }
 

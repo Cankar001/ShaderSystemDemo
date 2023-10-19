@@ -39,6 +39,8 @@ project "ShaderSystem"
 	
 	postbuildcommands
 	{
+		-- copy the asset folder into the current build directory
+		('{COPY} "%{wks.location}ShaderSystem/assets" "%{cfg.targetdir}/assets"'),
 	}
 
     filter "system:windows"

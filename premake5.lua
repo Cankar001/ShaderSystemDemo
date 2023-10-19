@@ -7,6 +7,7 @@ include "Dependencies.lua"
 workspace "ShaderSystem"
     architecture "x64"
     configurations { "Debug", "Release" }
+    startproject "ShaderSystem"
 
 	solution_items
 	{

@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#include "Core/Logger.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace ShaderSystem
@@ -16,6 +18,7 @@ namespace ShaderSystem
 
 	bool Camera::OnWindowResize(WindowResizeEvent& e)
 	{
+		SHADER_SYSTEM_INFO("Camera received window resize event.");
 		SetViewportSize(e.GetWidth(), e.GetHeight());
 		return false;
 	}

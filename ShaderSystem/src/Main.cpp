@@ -15,8 +15,6 @@
 
 #include "Events/WindowEvent.h"
 
-// TODO: remove include (TMP)
-#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace ShaderSystem;
@@ -132,9 +130,7 @@ int main(int argc, char* argv[])
 	sRunning = true;
 	while (sRunning)
 	{
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+		Renderer::BeginFrame(mainWindow->GetWidth(), mainWindow->GetHeight(), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
 		vbo->Bind();
 		ibo->Bind();
@@ -157,7 +153,7 @@ int main(int argc, char* argv[])
 			buffer->Bind();
 		});
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		Renderer::EndFrame(ibo->GetCount());
 
 		mainWindow->Update();
 	}

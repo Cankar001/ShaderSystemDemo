@@ -9,6 +9,7 @@ namespace ShaderSystem
 		Ref<ShaderLibrary> Library;
 	};
 
+	Ref<RendererAPI> Renderer::sGPURenderer;
 	static RenderingData *s_Data;
 
 	void Renderer::Init()
@@ -19,10 +20,14 @@ namespace ShaderSystem
 		ShaderCache::Init();
 
 		s_Data->Library->Load("assets/shaders/FlatColorShader.glsl", true);
+
+		sGPURenderer = RendererAPI::Create();
 	}
 
 	void Renderer::Shutdown()
 	{
+		sGPURenderer = nullptr;
+
 		if (s_Data)
 		{
 			s_Data->Library.reset();
@@ -32,6 +37,16 @@ namespace ShaderSystem
 			delete s_Data;
 			s_Data = nullptr;
 		}
+	}
+
+	void Renderer::BeginFrame(uint32_t inWindowWidth, uint32_t inWindowHeight, const glm::vec4 &inClearColor)
+	{
+		sGPURenderer->BeginFrame(inWindowWidth, inWindowHeight, inClearColor);
+	}
+
+	void Renderer::EndFrame(uint32_t inIndexCount)
+	{
+		sGPURenderer->EndFrame(inIndexCount);
 	}
 
 	void Renderer::OnShaderReloaded(uint64_t inHash)

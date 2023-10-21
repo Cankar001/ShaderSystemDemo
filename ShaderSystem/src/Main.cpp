@@ -6,8 +6,9 @@
 #include "Renderer/Renderer.h"
 #include "Renderer/FPSCamera.h"
 
-#include "Shader/Shader.h"
-#include "Shader/BufferLayout.h"
+#include "Graphics/Shader.h"
+#include "Graphics/ShaderUniformBufferSet.h"
+#include "Graphics/BufferLayout.h"
 
 #include "Events/WindowEvent.h"
 
@@ -88,6 +89,7 @@ int main(int argc, char* argv[])
 
 	Renderer::Init();
 
+	Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(1);
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
 	fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
 
@@ -139,18 +141,17 @@ int main(int argc, char* argv[])
 	glNamedBufferData(indexBufferId, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);
 
 	// Global ubo uniform buffer
-	GLuint globalUboId;
-	glCreateBuffers(1, &globalUboId);
-	glBindBuffer(GL_UNIFORM_BUFFER, globalUboId);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GlobalUBO), &cameraUBO, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, globalUboId);
+	std::vector<UniformVariable> globalUboLayout = {
+		UniformVariable("projection", UniformLayoutDataType::Mat4, 1, 0, sizeof(glm::mat4)),
+		UniformVariable("view", UniformLayoutDataType::Mat4, 1, 0, sizeof(glm::mat4))
+	};
+	uniformBufferSet->CreateUniform(sizeof(GlobalUBO), 0, globalUboLayout);
 	 
 	// Instance ubo uniform buffer
-	GLuint instanceUboId;
-	glCreateBuffers(1, &instanceUboId);
-	glBindBuffer(GL_UNIFORM_BUFFER, instanceUboId);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(instanceUBO), &instanceUBO, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 1, instanceUboId);
+	std::vector<UniformVariable> instanceUboLayout = {
+		UniformVariable("model", UniformLayoutDataType::Mat4, 1, 0, sizeof(glm::mat4)),
+	};
+	uniformBufferSet->CreateUniform(sizeof(InstanceUBO), 1, instanceUboLayout);
 
 	// Vertex bindings
 	BufferLayout layout = {
@@ -201,16 +202,17 @@ int main(int argc, char* argv[])
 		// Update camera properties
 		cameraUBO.Projection = fpsCamera->GetProjection();
 		cameraUBO.View = fpsCamera->GetViewMatrix();
-		glBindBuffer(GL_UNIFORM_BUFFER, globalUboId);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GlobalUBO), &cameraUBO);
+		uniformBufferSet->GetUniform(0)->SetData(&cameraUBO, sizeof(GlobalUBO), 0);
 
 		// Update Model data
 		instanceUBO.Model = glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, 0.0f}) * glm::rotate(glm::mat4(1.0f), 90.0f, {0.0f, 1.0f, 0.0f}) * glm::scale(glm::mat4(1.0f), {2.0f, 2.0f, 2.0f});
-		glBindBuffer(GL_UNIFORM_BUFFER, instanceUboId);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(InstanceUBO), &instanceUBO);
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, globalUboId);
-		glBindBufferBase(GL_UNIFORM_BUFFER, 1, instanceUboId);
+		uniformBufferSet->GetUniform(1)->SetData(&instanceUBO, sizeof(InstanceUBO), 0);
+		
+		// Bind all uniforms
+		uniformBufferSet->ForEach([&](const Ref<UniformBuffer> &buffer)
+		{
+			buffer->Bind();
+		});
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 

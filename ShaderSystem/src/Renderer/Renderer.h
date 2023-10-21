@@ -2,7 +2,7 @@
 
 #include "Core/Core.h"
 
-#include "Shader/ShaderLibrary.h"
+#include "Graphics/ShaderLibrary.h"
 
 namespace ShaderSystem
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "Shader/ShaderBuffer.h"
+#include "Graphics/ShaderBuffer.h"
 
 #include <string>
 #include <unordered_map>

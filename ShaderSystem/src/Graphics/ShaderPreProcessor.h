@@ -3,7 +3,7 @@
 #include "Core/Assert.h"
 #include "Core/Core.h"
 #include "Core/Hash.h"
-#include "Shader/ShaderBuffer.h"
+#include "ShaderBuffer.h"
 
 #include <regex>
 #include <string>

@@ -108,11 +108,6 @@ int main(int argc, char* argv[])
 	// Index buffer
 	Ref<IndexBuffer> ibo = IndexBuffer::Create(indices, sizeof(int32_t) * 6);
 
-	GLuint indexBufferId;
-	glCreateBuffers(1, &indexBufferId);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
-	glNamedBufferData(indexBufferId, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);
-
 	// Global ubo uniform buffer
 	std::vector<UniformVariable> globalUboLayout = {
 		UniformVariable("projection", UniformLayoutDataType::Mat4, 1, 0, sizeof(glm::mat4)),

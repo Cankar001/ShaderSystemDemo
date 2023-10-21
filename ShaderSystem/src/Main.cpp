@@ -93,24 +93,27 @@ int main(int argc, char* argv[])
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
 	fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
 
-	glm::vec4 quadColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 quadColorRed(1.0f, 0.0f, 0.0f, 1.0f);
+	glm::vec4 quadColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
+	glm::vec4 quadColorBlue(0.0f, 0.0f, 1.0f, 1.0f);
+	glm::vec4 quadColorYellow(1.0f, 1.0f, 0.0f, 1.0f);
 
 	Vertex* vertices = new Vertex[4];
 	vertices[0].Position = glm::vec3(-0.5f, -0.5f, 0.0f);
 	vertices[0].TexCoord = glm::vec2(0.0f, 0.0f);
-	vertices[0].Color = quadColor;
+	vertices[0].Color = quadColorRed;
 
 	vertices[1].Position = glm::vec3(-0.5f, 0.5f, 0.0f);
 	vertices[1].TexCoord = glm::vec2(0.0f, 0.0f);
-	vertices[1].Color = quadColor;
+	vertices[1].Color = quadColorGreen;
 
 	vertices[2].Position = glm::vec3(0.5f, 0.5f, 0.0f);
 	vertices[2].TexCoord = glm::vec2(0.0f, 0.0f);
-	vertices[2].Color = quadColor;
+	vertices[2].Color = quadColorBlue;
 
 	vertices[3].Position = glm::vec3(0.5f, -0.5f, 0.0f);
 	vertices[3].TexCoord = glm::vec2(0.0f, 0.0f);
-	vertices[3].Color = quadColor;
+	vertices[3].Color = quadColorYellow;
 
 	uint32_t indices[] = {
 		0, 1, 2, 2, 3, 0

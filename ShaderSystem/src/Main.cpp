@@ -9,6 +9,8 @@
 #include "Graphics/Shader.h"
 #include "Graphics/ShaderUniformBufferSet.h"
 #include "Graphics/VertexArray.h"
+#include "Graphics/VertexBuffer.h"
+#include "Graphics/IndexBuffer.h"
 #include "Graphics/BufferLayout.h"
 
 #include "Events/WindowEvent.h"
@@ -20,7 +22,7 @@
 using namespace ShaderSystem;
 
 static bool sRunning = false;
-static Ref<FPSCamera> fpsCamera;
+static Ref<FPSCamera> sFpsCamera;
 static bool onEvent(Event& e);
 static bool onWindowResize(WindowResizeEvent& e);
 static bool onWindowClose(WindowCloseEvent& e);
@@ -65,7 +67,7 @@ int main(int argc, char* argv[])
 	Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(1);
 	Ref<VertexArray> vao = VertexArray::Create();
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
-	fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
+	sFpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
 
 	glm::vec4 quadColorRed(1.0f, 0.0f, 0.0f, 1.0f);
 	glm::vec4 quadColorGreen(0.0f, 1.0f, 0.0f, 1.0f);
@@ -89,24 +91,23 @@ int main(int argc, char* argv[])
 	vertices[3].TexCoord = glm::vec2(0.0f, 0.0f);
 	vertices[3].Color = quadColorYellow;
 
-	uint32_t indices[] = {
+	int32_t indices[] = {
 		0, 1, 2, 2, 3, 0
 	};
 
 	GlobalUBO cameraUBO;
-	cameraUBO.Projection = fpsCamera->GetProjection();
-	cameraUBO.View = fpsCamera->GetViewMatrix();
+	cameraUBO.Projection = sFpsCamera->GetProjection();
+	cameraUBO.View = sFpsCamera->GetViewMatrix();
 
 	InstanceUBO instanceUBO;
 	instanceUBO.Model = glm::mat4(1.0f);
 
 	// vertex buffer
-	GLuint vertexBufferId;
-	glCreateBuffers(1, &vertexBufferId);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-	glNamedBufferData(vertexBufferId, sizeof(Vertex) * 4, vertices, GL_STATIC_DRAW);
+	Ref<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(Vertex) * 4);
 
 	// Index buffer
+	Ref<IndexBuffer> ibo = IndexBuffer::Create(indices, sizeof(int32_t) * 6);
+
 	GLuint indexBufferId;
 	glCreateBuffers(1, &indexBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
@@ -140,15 +141,15 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
+		vbo->Bind();
+		ibo->Bind();
 		flatColorShader->Bind();
 
 		// TODO: Update camera
 
 		// Update camera properties
-		cameraUBO.Projection = fpsCamera->GetProjection();
-		cameraUBO.View = fpsCamera->GetViewMatrix();
+		cameraUBO.Projection = sFpsCamera->GetProjection();
+		cameraUBO.View = sFpsCamera->GetViewMatrix();
 		uniformBufferSet->GetUniform(0)->SetData(&cameraUBO, sizeof(GlobalUBO), 0);
 
 		// Update Model data
@@ -183,7 +184,7 @@ static bool onEvent(Event& e)
 	dispatcher.Dispatch<WindowCloseEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowClose));
 	dispatcher.Dispatch<WindowResizeEvent>(SHADER_SYSTEM_BIND_EVENT_FN(onWindowResize));
 	
-	fpsCamera->OnEvent(e);
+	sFpsCamera->OnEvent(e);
 	return false;
 }
 

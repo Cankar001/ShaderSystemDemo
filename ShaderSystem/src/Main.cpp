@@ -25,8 +25,6 @@ static bool onEvent(Event& e);
 static bool onWindowResize(WindowResizeEvent& e);
 static bool onWindowClose(WindowCloseEvent& e);
 
-// USER DATA BEGIN
-
 struct Vertex
 {
 	glm::vec3 Position;
@@ -44,8 +42,6 @@ struct InstanceUBO
 {
 	glm::mat4 Model;
 };
-
-// USER DATA END
 
 int main(int argc, char* argv[])
 {
@@ -102,6 +98,8 @@ int main(int argc, char* argv[])
 
 	// vertex buffer
 	Ref<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(Vertex) * 4);
+	// NOTE: As soon as the buffer object is created, the memory can be freed, because the impl does make a copy.
+	delete[] vertices;
 
 	// Index buffer
 	Ref<IndexBuffer> ibo = IndexBuffer::Create(indices, sizeof(int32_t) * 6);
@@ -160,10 +158,6 @@ int main(int argc, char* argv[])
 
 	SHADER_SYSTEM_INFO("Shutting down application.");
 
-	// NOTE: Not really necessary, not cleaning global memory might also be faster than to clean it, because delete[]/delete results in a free() call, which is a OS function.
-	//       And OS functions are slow.
-	delete[] vertices;
-
 	Renderer::Shutdown();
 	Logger::Shutdown();
 	return 0;
@@ -179,13 +173,13 @@ static bool onEvent(Event& e)
 	return false;
 }
 
-static bool onWindowResize(ShaderSystem::WindowResizeEvent& e)
+static bool onWindowResize(WindowResizeEvent& e)
 {
 	SHADER_SYSTEM_INFO("Received application resize event to size {0}x{1}.", e.GetWidth(), e.GetHeight());
 	return false;
 }
 
-static bool onWindowClose(ShaderSystem::WindowCloseEvent& e)
+static bool onWindowClose(WindowCloseEvent& e)
 {
 	SHADER_SYSTEM_INFO("Received application quit event.");
 	sRunning = false;

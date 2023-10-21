@@ -1,13 +1,13 @@
-#include "ShaderUniformBuffer.h"
+#include "ShaderStorageBuffer.h"
 
 #include "Core/Assert.h"
 #include "Core/Logger.h"
 
-#include "Platform/OpenGL/OpenGLUniformBuffer.h"
+#include "Platform/OpenGL/OpenGLStorageBuffer.h"
 
 namespace ShaderSystem
 {
-	UniformBuffer::UniformBuffer(uint32_t inBinding, const std::vector<UniformVariable> &inLayout)
+	StorageBuffer::StorageBuffer(uint32_t inBinding, const std::vector<UniformVariable> &inLayout)
 	{
 		uint32_t offset = 0;
 		uint32_t size = 0;
@@ -24,28 +24,20 @@ namespace ShaderSystem
 		mGPUData = malloc(mGPUDataSize);
 	}
 
-	UniformBuffer::~UniformBuffer()
+	StorageBuffer::~StorageBuffer()
 	{
 		free(mGPUData);
 		mGPUData = nullptr;
 	}
 
-	void UniformBuffer::Bind() const
-	{
-	}
-
-	void UniformBuffer::Unbind() const
-	{
-	}
-
-	void UniformBuffer::SetData(const void *inData, uint32_t inSize, uint32_t inOffset)
+	void StorageBuffer::SetData(const void *inData, uint32_t inSize, uint32_t inOffset)
 	{
 		SHADER_SYSTEM_ASSERT(inOffset < inSize);
 
 		uint32_t elementSize = mGPUDataSize;
 		if (mGPUDataSize < inSize)
 		{
-			SHADER_SYSTEM_WARN("UniformBuffer::SetData - the copied buffer is larger than expected!");
+			SHADER_SYSTEM_WARN("StorageBuffer::SetData - the copied buffer is larger than expected!");
 			SHADER_SYSTEM_ASSERT(false);
 		}
 
@@ -53,7 +45,7 @@ namespace ShaderSystem
 		UploadToShader();
 	}
 
-	void UniformBuffer::SetVariable(const std::string &inVarName, void *inValue)
+	void StorageBuffer::SetVariable(const std::string &inVarName, void *inValue)
 	{
 		auto &entry = mUniformVariables.find(inVarName);
 		if (entry != mUniformVariables.end())
@@ -61,11 +53,12 @@ namespace ShaderSystem
 			uint32_t size = entry->second.first;
 			uint32_t offset = entry->second.second;
 			memcpy_s((void *)((char *)mGPUData + offset), size, inValue, size);
-			UploadToShader();
 		}
-	}
 
-	void *UniformBuffer::GetVariable(const std::string &inVarName)
+		UploadToShader();
+	}
+	
+	void *StorageBuffer::GetVariable(const std::string &inVarName)
 	{
 		auto &entry = mUniformVariables.find(inVarName);
 		if (entry != mUniformVariables.end())
@@ -80,9 +73,9 @@ namespace ShaderSystem
 
 		return nullptr;
 	}
-
-	Ref<UniformBuffer> UniformBuffer::Create(uint32_t inSize, uint32_t inBinding, const std::vector<UniformVariable> &inLayout)
+	
+	Ref<StorageBuffer> StorageBuffer::Create(uint32_t inSize, uint32_t inBinding, const std::vector<UniformVariable> &inLayout)
 	{
-		return MakeRef<OpenGLUniformBuffer>(inSize, inBinding, inLayout);
+		return MakeRef<OpenGLStorageBuffer>(inSize, inBinding, inLayout);
 	}
 }

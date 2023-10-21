@@ -2,7 +2,7 @@
 
 #include "Core/Core.h"
 
-#include "Graphics/ShaderUniformBuffer.h"
+#include "Interfaces/ShaderUniformBuffer.h"
 
 namespace ShaderSystem
 {

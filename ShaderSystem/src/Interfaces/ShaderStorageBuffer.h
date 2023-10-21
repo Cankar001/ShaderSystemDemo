@@ -1,34 +1,37 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "ShaderUniformLayout.h"
 
-#include <map>
+#include "Graphics/ShaderUniformLayout.h"
+
 #include <string>
+#include <vector>
+#include <map>
 
 namespace ShaderSystem
 {
-	class UniformBuffer
+	class StorageBuffer
 	{
 	public:
 
-		virtual ~UniformBuffer();
+		virtual ~StorageBuffer();
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
+		uint32_t GetBinding() const { return mBinding; }
 
 		void SetData(const void *inData, uint32_t inSize, uint32_t inOffset = 0);
 		void SetVariable(const std::string &inVarName, void *inValue);
 		void *GetVariable(const std::string &inVarName);
 
 		virtual void UploadToShader() = 0;
-		uint32_t GetBinding() const { return mBinding; }
+		virtual void Resize(uint32_t inSize) = 0;
 
-		static Ref<UniformBuffer> Create(uint32_t inSize, uint32_t inBinding, const std::vector<UniformVariable> &inLayout = std::vector<UniformVariable>());
+		static Ref<StorageBuffer> Create(uint32_t inSize, uint32_t inBinding, const std::vector<UniformVariable> &inLayout = std::vector<UniformVariable>());
 
 	protected:
 
-		UniformBuffer(uint32_t inBinding, const std::vector<UniformVariable> &inLayout);
+		StorageBuffer(uint32_t inBinding, const std::vector<UniformVariable> &inLayout);
 
 	protected:
 

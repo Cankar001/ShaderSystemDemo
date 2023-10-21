@@ -2,6 +2,8 @@
 
 #include "Core/Logger.h"
 
+#include <glad/glad.h>
+
 namespace ShaderSystem
 {
 	namespace utils

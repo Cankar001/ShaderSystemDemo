@@ -2,7 +2,7 @@
 
 #include "Core/Core.h"
 
-#include "ShaderUniformBuffer.h"
+#include "Interfaces/ShaderUniformBuffer.h"
 
 #include <map>
 

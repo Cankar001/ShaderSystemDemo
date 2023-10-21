@@ -8,10 +8,11 @@
 
 #include "Graphics/Shader.h"
 #include "Graphics/ShaderUniformBufferSet.h"
-#include "Graphics/VertexArray.h"
-#include "Graphics/VertexBuffer.h"
-#include "Graphics/IndexBuffer.h"
 #include "Graphics/BufferLayout.h"
+
+#include "Interfaces/VertexArray.h"
+#include "Interfaces/VertexBuffer.h"
+#include "Interfaces/IndexBuffer.h"
 
 #include "Events/WindowEvent.h"
 

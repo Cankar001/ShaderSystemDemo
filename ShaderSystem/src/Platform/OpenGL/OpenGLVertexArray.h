@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "Graphics/VertexArray.h"
+
+#include "Interfaces/VertexArray.h"
 
 namespace ShaderSystem
 {

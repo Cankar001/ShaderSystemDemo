@@ -2,8 +2,6 @@
 
 #include "Interfaces/GPUShader.h"
 
-#include <glad/glad.h>
-
 namespace ShaderSystem
 {
 	class OpenGLShader : public GPUShader
@@ -28,8 +26,8 @@ namespace ShaderSystem
 
 	private:
 
-		GLuint mProgramID;
-		std::unordered_map<ShaderDomain, GLuint> mShaderHandles;
+		uint32_t mProgramID;
+		std::unordered_map<ShaderDomain, uint32_t> mShaderHandles;
 
 		//	std::vector<OpenGLShaderDescriptorSet> mShaderDescriptorSets;
 		//	std::vector<OpenGLShaderPushConstantRange> mPushConstantRanges;

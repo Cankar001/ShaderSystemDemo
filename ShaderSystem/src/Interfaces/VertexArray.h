@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
-#include "BufferLayout.h"
+#include "Graphics/BufferLayout.h"
 
 namespace ShaderSystem
 {

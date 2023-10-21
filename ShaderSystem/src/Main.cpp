@@ -58,10 +58,14 @@ int main(int argc, char* argv[])
 
 	Renderer::Init();
 
+	// NOTE: In this prototype we will just render one frame per frame, 
+	// in a more realistic example you would have up to 3 frames per frame, 
+	// that could roughly be rendered at the same time.
 	Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(1);
+	
 	Ref<VertexArray> vao = VertexArray::Create();
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
-	sFpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
+	sFpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, properties.Width, properties.Height);
 
 	glm::vec4 quadColorRed(1.0f, 0.0f, 0.0f, 1.0f);
 	glm::vec4 quadColorGreen(0.0f, 1.0f, 0.0f, 1.0f);

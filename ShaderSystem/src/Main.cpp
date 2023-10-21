@@ -8,6 +8,7 @@
 
 #include "Graphics/Shader.h"
 #include "Graphics/ShaderUniformBufferSet.h"
+#include "Graphics/VertexArray.h"
 #include "Graphics/BufferLayout.h"
 
 #include "Events/WindowEvent.h"
@@ -23,31 +24,6 @@ static Ref<FPSCamera> fpsCamera;
 static bool onEvent(Event& e);
 static bool onWindowResize(WindowResizeEvent& e);
 static bool onWindowClose(WindowCloseEvent& e);
-
-// TODO: Move to renderer
-static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-{
-	switch (type)
-	{
-	case ShaderDataType::Float:    return GL_FLOAT;
-	case ShaderDataType::Float2:   return GL_FLOAT;
-	case ShaderDataType::Float3:   return GL_FLOAT;
-	case ShaderDataType::Float4:   return GL_FLOAT;
-	case ShaderDataType::Mat3:     return GL_FLOAT;
-	case ShaderDataType::Mat4:     return GL_FLOAT;
-	case ShaderDataType::Int:      return GL_INT;
-	case ShaderDataType::Int2:     return GL_INT;
-	case ShaderDataType::Int3:     return GL_INT;
-
-		// OpenGL has problems with uploading Int4s on the GPU unless
-		// they are defined as GL_FLOAT.
-	case ShaderDataType::Int4:     return GL_FLOAT;
-
-	case ShaderDataType::Bool:     return GL_BOOL;
-	}
-
-	return 0;
-}
 
 // USER DATA BEGIN
 
@@ -75,9 +51,6 @@ int main(int argc, char* argv[])
 {
 	Logger::Init();
 
-	// TODO: TEMP until ready to run in solo app (outside vs, then the assets folder has to be in the same directory)
-	//FileSystem::SetCurrentWorkingDirectory("../../../");
-
 	WindowData properties;
 	properties.Title = "ShaderSystem Demo";
 	properties.Width = 1280;
@@ -90,6 +63,7 @@ int main(int argc, char* argv[])
 	Renderer::Init();
 
 	Ref<UniformBufferSet> uniformBufferSet = UniformBufferSet::Create(1);
+	Ref<VertexArray> vao = VertexArray::Create();
 	Ref<Shader> flatColorShader = Renderer::GetShaderLibrary()->Get("FlatColorShader");
 	fpsCamera = MakeRef<FPSCamera>(CameraProjection::Orthographic, 1280, 720);
 
@@ -126,11 +100,6 @@ int main(int argc, char* argv[])
 	InstanceUBO instanceUBO;
 	instanceUBO.Model = glm::mat4(1.0f);
 
-	// NOTE: only one global vao
-	GLuint vao;
-	glCreateVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
 	// vertex buffer
 	GLuint vertexBufferId;
 	glCreateBuffers(1, &vertexBufferId);
@@ -162,32 +131,7 @@ int main(int argc, char* argv[])
 		BufferElement("a_TexCoord", ShaderDataType::Float2, false),
 		BufferElement("a_Color", ShaderDataType::Float4, false)
 	};
-
-	uint32_t attribIndex = 0;
-	for (const auto& element : layout)
-	{
-		GLenum glBaseType = ShaderDataTypeToOpenGLBaseType(element.Type);
-		glEnableVertexAttribArray(attribIndex);
-
-		if (glBaseType == GL_INT)
-		{
-			glVertexAttribIPointer(attribIndex,
-				element.GetComponentCount(),
-				glBaseType,
-				layout.GetStride(),
-				(const void*)(intptr_t)element.Offset);
-		}
-		else
-		{
-			glVertexAttribPointer(attribIndex,
-				element.GetComponentCount(),
-				glBaseType,
-				element.Normalized,
-				layout.GetStride(),
-				(const void*)(intptr_t)element.Offset);
-		}
-		++attribIndex;
-	}
+	vao->Bind(layout);
 
 	sRunning = true;
 	while (sRunning)

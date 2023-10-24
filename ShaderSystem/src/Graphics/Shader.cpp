@@ -19,9 +19,24 @@ namespace ShaderSystem
 	{
 		static std::filesystem::path GetCacheDirectory()
 		{
-			std::filesystem::path p = "assets/cache/shaders/OpenGL/";
+			std::string renderingAPIStr = Renderer::GetCurrentRenderingAPI()->ToString();
+			std::filesystem::path p = "assets/cache/shaders/" + renderingAPIStr + "/";
 
-			// TODO: Check if it exists and create it recursivly.
+			std::error_code err;
+			if (!std::filesystem::create_directories(p, err))
+			{
+				if (std::filesystem::exists(p))
+				{
+					// NOTE: directory already exists.
+					err.clear();
+				}
+			}
+
+			if (err)
+			{
+				SHADER_SYSTEM_ERROR("{0}", err.message().c_str());
+				err.clear();
+			}
 
 			return p;
 		}

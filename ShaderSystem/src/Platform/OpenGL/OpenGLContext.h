@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/RenderingContext.h"
+#include "Interfaces/RenderingContext.h"
 
 namespace ShaderSystem
 {

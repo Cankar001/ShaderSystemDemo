@@ -3,6 +3,8 @@
 #include "Core/Core.h"
 #include "Interfaces/VertexBuffer.h"
 
+#include "DX11Resources.h"
+
 namespace ShaderSystem
 {
 	class DX11VertexBuffer : public VertexBuffer
@@ -20,7 +22,8 @@ namespace ShaderSystem
 
 	private:
 
-		void *mData = nullptr;
-		uint32_t mSize = 0;
+		ComPtr<ID3D11Buffer>	mBuffer;
+		UINT					mBufferSize;
+		std::unique_ptr<UINT>	mStride;
 	};
 }

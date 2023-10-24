@@ -3,6 +3,8 @@
 #include "Core/Core.h"
 #include "Interfaces/IndexBuffer.h"
 
+#include "DX11Resources.h"
+
 namespace ShaderSystem
 {
 	class DX11IndexBuffer : public IndexBuffer
@@ -23,8 +25,8 @@ namespace ShaderSystem
 
 	private:
 
-		void *mData = nullptr;
-		uint32_t mSize = 0;
-		uint32_t mCount = 0;
+		ComPtr<ID3D11Buffer>	mBuffer;
+		UINT					mBufferSize;
+		uint32_t				mCount = 0;
 	};
 }

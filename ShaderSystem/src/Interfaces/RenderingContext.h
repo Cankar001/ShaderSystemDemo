@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Window/Window.h"
 
 namespace ShaderSystem
 {
@@ -10,7 +11,7 @@ namespace ShaderSystem
 
 		virtual ~RenderingContext() {}
 
-		virtual void Init() = 0;
+		virtual void Init(const WindowData &inData) = 0;
 		virtual void MakeCurrent() = 0;
 
 		virtual void* GetCurrentContext() = 0;

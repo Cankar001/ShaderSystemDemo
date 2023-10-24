@@ -7,7 +7,7 @@
 
 #include "Events/WindowEvent.h"
 
-#include "Renderer/RenderingContext.h"
+#include "Interfaces/RenderingContext.h"
 
 namespace ShaderSystem
 {
@@ -303,7 +303,7 @@ namespace ShaderSystem
 		}
 
 		mContext = RenderingContext::Create(mNativeHandle);
-		mContext->Init();
+		mContext->Init(mWindowData);
 	}
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

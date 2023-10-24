@@ -2,7 +2,7 @@
 
 #include "Window/Window.h"
 
-#include "Renderer/RenderingContext.h"
+#include "Interfaces/RenderingContext.h"
 
 struct GLFWwindow;
 struct GLFWcursor;

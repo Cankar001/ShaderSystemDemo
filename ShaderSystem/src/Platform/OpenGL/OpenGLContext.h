@@ -11,7 +11,7 @@ namespace ShaderSystem
 		OpenGLContext(void* inWindowHandle);
 		virtual ~OpenGLContext();
 
-		virtual void Init() override;
+		virtual void Init(const WindowData &inData) override;
 		virtual void MakeCurrent() override;
 
 		virtual void* GetCurrentContext() override;

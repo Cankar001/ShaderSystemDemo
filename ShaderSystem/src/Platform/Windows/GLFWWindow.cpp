@@ -255,10 +255,10 @@ namespace ShaderSystem
 		glfwSetCursor(mNativeHandle, mNativeCursor);
 
 		mContext = RenderingContext::Create((void*)mNativeHandle);
-		mContext->Init();
+		mContext->Init(mWindowData);
 
 		glfwSetWindowUserPointer(mNativeHandle, &mWindowData);
-		glfwSwapInterval(false);
+	//	glfwSwapInterval(false);
 
 		SetCallbacks();
 

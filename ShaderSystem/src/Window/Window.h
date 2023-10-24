@@ -32,6 +32,8 @@ namespace ShaderSystem
 
 		WindowData(bool fullscreen = false, uint32_t width = 1270, uint32_t height = 720, const std::string& title = "ShaderSystem")
 			: Fullscreen(fullscreen), Width(width), Height(height), Title(title) {}
+
+		WindowData &operator=(const WindowData&) = default;
 	};
 
 	class Window

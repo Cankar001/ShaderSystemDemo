@@ -20,7 +20,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	void OpenGLContext::Init()
+	void OpenGLContext::Init(const WindowData &inData)
 	{
 		glfwMakeContextCurrent((GLFWwindow*)mWindowHandle);
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -59,7 +59,7 @@ namespace ShaderSystem
 		wglDeleteContext(rc);
 	}
 
-	void OpenGLContext::Init()
+	void OpenGLContext::Init(const WindowData &inData)
 	{
 		PIXELFORMATDESCRIPTOR pfd =
 		{

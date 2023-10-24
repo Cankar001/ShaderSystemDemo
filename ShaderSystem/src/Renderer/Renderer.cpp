@@ -12,6 +12,11 @@ namespace ShaderSystem
 	Ref<RendererAPI> Renderer::sGPURenderer;
 	static RenderingData *s_Data;
 
+	void Renderer::SelectRenderingBackend(RenderingAPIType inType)
+	{
+		sGPURenderer = RendererAPI::Create(inType);
+	}
+
 	void Renderer::Init()
 	{
 		s_Data = new RenderingData();
@@ -20,19 +25,17 @@ namespace ShaderSystem
 		ShaderCache::Init();
 
 		s_Data->Library->Load("assets/shaders/FlatColorShader.glsl", true);
-
-		sGPURenderer = RendererAPI::Create();
 	}
 
 	void Renderer::Shutdown()
 	{
-		sGPURenderer = nullptr;
-
 		if (s_Data)
 		{
 			s_Data->Library.reset();
 
 			ShaderCache::Shutdown();
+
+			sGPURenderer = nullptr;
 
 			delete s_Data;
 			s_Data = nullptr;
@@ -47,6 +50,16 @@ namespace ShaderSystem
 	void Renderer::EndFrame(uint32_t inIndexCount)
 	{
 		sGPURenderer->EndFrame(inIndexCount);
+	}
+
+	RenderingAPIType Renderer::GetCurrentRenderingAPIType()
+	{
+		return sGPURenderer->GetType();
+	}
+
+	Ref<RendererAPI> Renderer::GetCurrentRenderingAPI()
+	{
+		return sGPURenderer;
 	}
 
 	void Renderer::OnShaderReloaded(uint64_t inHash)

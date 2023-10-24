@@ -4,6 +4,7 @@
 #include "Core/Logger.h"
 
 #include "Platform/OpenGL/OpenGLStorageBuffer.h"
+#include "Renderer/Renderer.h"
 
 namespace ShaderSystem
 {
@@ -76,6 +77,17 @@ namespace ShaderSystem
 	
 	Ref<StorageBuffer> StorageBuffer::Create(uint32_t inSize, uint32_t inBinding, const std::vector<UniformVariable> &inLayout)
 	{
-		return MakeRef<OpenGLStorageBuffer>(inSize, inBinding, inLayout);
+		switch (Renderer::GetCurrentRenderingAPIType())
+		{
+		default:
+		case RenderingAPIType::OpenGL:
+			return MakeRef<OpenGLStorageBuffer>(inSize, inBinding, inLayout);
+
+		case RenderingAPIType::DirectX11:
+		case RenderingAPIType::DirectX12:
+		case RenderingAPIType::Metal:
+		case RenderingAPIType::Vulkan:
+			return nullptr;
+		}
 	}
 }

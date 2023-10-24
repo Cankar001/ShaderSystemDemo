@@ -4,11 +4,20 @@
 
 namespace ShaderSystem
 {
-	OpenGLRenderer::OpenGLRenderer()
+	OpenGLRenderer::OpenGLRenderer(RenderingAPIType inType)
+		: RendererAPI(inType)
 	{
 	}
 
 	OpenGLRenderer::~OpenGLRenderer()
+	{
+	}
+
+	void OpenGLRenderer::Init()
+	{
+	}
+
+	void OpenGLRenderer::Shutdown()
 	{
 	}
 	

@@ -54,6 +54,8 @@ int main(int argc, char* argv[])
 	properties.Height = 720;
 	properties.Maximized = true;
 
+	Renderer::SelectRenderingBackend(RenderingAPIType::OpenGL);
+
 	Ref<Window> mainWindow = Window::Create(properties);
 	mainWindow->SetEventCallback(SHADER_SYSTEM_BIND_EVENT_FN(onEvent));
 

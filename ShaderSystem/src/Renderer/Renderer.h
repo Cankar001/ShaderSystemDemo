@@ -11,6 +11,8 @@ namespace ShaderSystem
 	{
 	public:
 
+		static void SelectRenderingBackend(RenderingAPIType inType);
+
 		static void Init();
 		static void Shutdown();
 
@@ -18,6 +20,8 @@ namespace ShaderSystem
 		static void EndFrame(uint32_t inIndexCount);
 
 		static void OnShaderReloaded(uint64_t inHash);
+		static RenderingAPIType GetCurrentRenderingAPIType();
+		static Ref<RendererAPI> GetCurrentRenderingAPI();
 
 		static Ref<ShaderLibrary> GetShaderLibrary();
 

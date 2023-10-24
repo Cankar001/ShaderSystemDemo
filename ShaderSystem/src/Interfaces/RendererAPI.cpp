@@ -4,8 +4,24 @@
 
 namespace ShaderSystem
 {
-	Ref<RendererAPI> RendererAPI::Create()
+	Ref<RendererAPI> RendererAPI::Create(RenderingAPIType inType)
 	{
-		return MakeRef<OpenGLRenderer>();
+		switch (inType)
+		{
+		default:
+		case RenderingAPIType::OpenGL:
+			return MakeRef<OpenGLRenderer>(inType);
+
+		case RenderingAPIType::DirectX11:
+		case RenderingAPIType::DirectX12:
+		case RenderingAPIType::Metal:
+		case RenderingAPIType::Vulkan:
+			return nullptr;
+		}
+	}
+
+	RendererAPI::RendererAPI(RenderingAPIType inType)
+		: mType(inType)
+	{
 	}
 }

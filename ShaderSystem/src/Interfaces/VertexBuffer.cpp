@@ -1,6 +1,7 @@
 #include "VertexBuffer.h"
 
 #include "Platform/OpenGL/OpenGLVertexBuffer.h"
+#include "Platform/DX11/DX11VertexBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -14,6 +15,8 @@ namespace ShaderSystem
 			return MakeRef<OpenGLVertexBuffer>(inData, inSize);
 
 		case RenderingAPIType::DirectX11:
+			return MakeRef<DX11VertexBuffer>(inData, inSize);
+
 		case RenderingAPIType::DirectX12:
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
@@ -30,6 +33,8 @@ namespace ShaderSystem
 			return MakeRef<OpenGLVertexBuffer>(inSize);
 
 		case RenderingAPIType::DirectX11:
+			return MakeRef<DX11VertexBuffer>(inSize);
+
 		case RenderingAPIType::DirectX12:
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:

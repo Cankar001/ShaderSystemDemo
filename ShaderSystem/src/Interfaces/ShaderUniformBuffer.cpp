@@ -4,6 +4,7 @@
 #include "Core/Logger.h"
 
 #include "Platform/OpenGL/OpenGLUniformBuffer.h"
+#include "Platform/DX11/DX11UniformBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -83,6 +84,8 @@ namespace ShaderSystem
 			return MakeRef<OpenGLUniformBuffer>(inSize, inBinding, inLayout);
 
 		case RenderingAPIType::DirectX11:
+			return MakeRef<DX11UniformBuffer>(inSize, inBinding, inLayout);
+
 		case RenderingAPIType::DirectX12:
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:

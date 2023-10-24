@@ -1,6 +1,7 @@
 #include "RendererAPI.h"
 
 #include "Platform/OpenGL/OpenGLRenderer.h"
+#include "Platform/DX11/DX11Renderer.h"
 
 namespace ShaderSystem
 {
@@ -13,6 +14,8 @@ namespace ShaderSystem
 			return MakeRef<OpenGLRenderer>(inType);
 
 		case RenderingAPIType::DirectX11:
+			return MakeRef<DX11Renderer>(inType);
+
 		case RenderingAPIType::DirectX12:
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:

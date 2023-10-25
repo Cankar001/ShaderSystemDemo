@@ -10,11 +10,15 @@ To start the demo application, you just need python and Visual Studio 2022. The 
 
 ### Clone the repo
 
-`git clone https://github.com/Cankar001/ShaderSystemDemo`
+```sh
+git clone https://github.com/Cankar001/ShaderSystemDemo
+```
 
 ### Generate the VS solution
 
-`cd ShaderSystemDemo/Scripts && python Setup.py`
+```sh
+cd ShaderSystemDemo/Scripts && python Setup.py
+```
 
 Now you should see the solution file in the root directory of the project. Just open it and build either the Debug or Release build.
 

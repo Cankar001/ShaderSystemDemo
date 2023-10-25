@@ -2,6 +2,7 @@
 
 #include "Core/Core.h"
 #include "Shader.h"
+#include "BufferLayout.h"
 
 #include <unordered_map>
 #include <string>
@@ -18,11 +19,12 @@ namespace ShaderSystem
 
 		void Add(const Ref<Shader>& shader);
 		void Add(const std::string& name, const Ref<Shader>& shader);
-		void Load(const std::filesystem::path& filePath, bool forceCompile = false);
-		void Load(const std::string& name, const std::filesystem::path& filePath, bool forceCompile = false);
+		
+		void Load(const std::filesystem::path& filePath, const BufferLayout &inLayout, bool forceCompile = false);
+		void Load(const std::string& name, const std::filesystem::path& filePath, const BufferLayout &inLayout, bool forceCompile = false);
 
-		void LoadFromString(const std::string& source, ShaderLanguage language = ShaderLanguage::GLSL);
-		void LoadFromString(const std::string& name, const std::string& source, ShaderLanguage language = ShaderLanguage::GLSL);
+		void LoadFromString(const std::string& source, const BufferLayout &inLayout, ShaderLanguage language = ShaderLanguage::GLSL);
+		void LoadFromString(const std::string& name, const std::string& source, const BufferLayout &inLayout, ShaderLanguage language = ShaderLanguage::GLSL);
 
 		void ReloadShader(const std::string& name);
 		void ReloadAllShaders();

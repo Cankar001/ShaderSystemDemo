@@ -4,6 +4,7 @@
 
 #include "Core/Core.h"
 
+#include "BufferLayout.h"
 #include "ShaderBuffer.h"
 #include "ShaderPreProcessor.h"
 
@@ -23,8 +24,8 @@ namespace ShaderSystem
 
 		using ShaderReloadedCallback = std::function<void()>;
 
-		Shader(const std::filesystem::path& inFilePath, bool inForceCompile);
-		Shader(const std::string& inSource, const std::string& inName, ShaderLanguage inLanguage);
+		Shader(const std::filesystem::path& inFilePath, const BufferLayout &inLayout, bool inForceCompile = false);
+		Shader(const std::string& inSource, const std::string& inName, const BufferLayout &inLayout, ShaderLanguage inLanguage = ShaderLanguage::GLSL);
 		~Shader();
 
 		void Reload(bool inForceCompile = false);
@@ -41,8 +42,8 @@ namespace ShaderSystem
 		const std::string& GetName() const { return mName; }
 		const std::filesystem::path& GetFilePath() const { return mFilePath; }
 
-		static Ref<Shader> LoadFromFile(const std::filesystem::path& inFilePath, bool inForceCompile = false);
-		static Ref<Shader> LoadFromString(const std::string &inSource, const std::string &inName = "undefined", ShaderLanguage inLanguage = ShaderLanguage::GLSL);
+		static Ref<Shader> LoadFromFile(const std::filesystem::path& inFilePath, const BufferLayout &inLayout, bool inForceCompile = false);
+		static Ref<Shader> LoadFromString(const std::string &inSource, const std::string &inName, const BufferLayout &inLayout, ShaderLanguage inLanguage = ShaderLanguage::GLSL);
 
 	private:
 

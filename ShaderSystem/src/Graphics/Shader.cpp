@@ -13,6 +13,9 @@
 #include <shaderc/shaderc.hpp>
 #include <libshaderc_util/file_finder.h>
 
+#include <spirv_cross/spirv_hlsl.hpp>
+#include <spirv_cross/spirv_msl.hpp>
+
 namespace ShaderSystem
 {
 	namespace utils
@@ -188,10 +191,10 @@ namespace ShaderSystem
 	static std::unordered_map<uint32_t, std::unordered_map<uint32_t, ShaderUniformBuffer*>> sUniformBuffers;
 	static std::unordered_map<uint32_t, std::unordered_map<uint32_t, ShaderStorageBuffer*>> sStorageBuffers;
 
-	Shader::Shader(const std::filesystem::path& inFilePath, bool inForceCompile)
+	Shader::Shader(const std::filesystem::path& inFilePath, const BufferLayout &inLayout, bool inForceCompile)
 		: mFilePath(inFilePath)
 	{
-		mGpuShader = GPUShader::Create();
+		mGpuShader = GPUShader::Create(inLayout);
 		mName = mFilePath.filename().string();
 		if (mName.find('.') != std::string::npos)
 		{
@@ -211,10 +214,10 @@ namespace ShaderSystem
 		}
 	}
 
-	Shader::Shader(const std::string& inSource, const std::string& inName, ShaderLanguage inLanguage)
+	Shader::Shader(const std::string& inSource, const std::string& inName, const BufferLayout &inLayout, ShaderLanguage inLanguage)
 		: mName(inName), mLanguage(inLanguage), mFilePath("<unknown>")
 	{
-		mGpuShader = GPUShader::Create();
+		mGpuShader = GPUShader::Create(inLayout);
 		Load(inSource, true);
 	}
 
@@ -291,14 +294,14 @@ namespace ShaderSystem
 		mMacros[inName] = inValue;
 	}
 	
-	Ref<Shader> Shader::LoadFromFile(const std::filesystem::path& inFilePath, bool inForceCompile)
+	Ref<Shader> Shader::LoadFromFile(const std::filesystem::path& inFilePath, const BufferLayout &inLayout, bool inForceCompile)
 	{
-		return MakeRef<Shader>(inFilePath, inForceCompile);
+		return MakeRef<Shader>(inFilePath, inLayout, inForceCompile);
 	}
 	
-	Ref<Shader> Shader::LoadFromString(const std::string& inSource, const std::string& inName, ShaderLanguage inLanguage)
+	Ref<Shader> Shader::LoadFromString(const std::string& inSource, const std::string& inName, const BufferLayout &inLayout, ShaderLanguage inLanguage)
 	{
-		return MakeRef<Shader>(inSource, inName, inLanguage);
+		return MakeRef<Shader>(inSource, inName, inLayout, inLanguage);
 	}
 
 	void Shader::Load(const std::string& inSource, bool inForceCompile)
@@ -695,7 +698,6 @@ namespace ShaderSystem
 		{
 			shaderc::Compiler compiler;
 			shaderc::CompileOptions options;
-			options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
 			options.SetWarningsAsErrors();
 			options.SetGenerateDebugInfo();
 
@@ -704,17 +706,30 @@ namespace ShaderSystem
 			optimize = true;
 #endif // SHADER_SYSTEM_RELEASE
 
+			if (Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::OpenGL)
+			{
+				options.SetTargetEnvironment(shaderc_target_env_opengl, shaderc_env_version_opengl_4_5);
+			}
+			else if (Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::Vulkan)
+			{
+				options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
+			}
+
 			if (optimize)
+			{
 				options.SetOptimizationLevel(shaderc_optimization_level_performance);
+			}
 
 			// Compile shader
 			const shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv(stageSource.c_str(), utils::ShaderStageToShaderC(inDomain), mFilePath.string().c_str(), options);
 
 			if (result.GetCompilationStatus() != shaderc_compilation_status_success)
+			{
 				return fmt::format("Shader compilation error: {} ({})", result.GetErrorMessage(), mFilePath.string().c_str());
+			}
 
 			outOutputBinary[inDomain] = std::vector<uint32_t>(result.begin(), result.end());
-			return {};
+			return std::string();
 		}
 		else if (mLanguage == ShaderLanguage::HLSL)
 		{
@@ -802,7 +817,35 @@ namespace ShaderSystem
 		for (const auto& [domain, binary] : inShaderData)
 		{
 			SHADER_SYSTEM_ASSERT(binary.size() > 0);
-			mGpuShader->AddShaderDomain(binary, domain);
+
+			// DirectX11 and DirectX12 need HLSL binaries, so we need to cross compile the binaries.
+			if (Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::DirectX11 || Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::DirectX12)
+			{
+				spirv_cross::CompilerHLSL hlslCompiler(binary);
+				spirv_cross::CompilerHLSL::Options compileOptions;
+				compileOptions.shader_model = 500;
+				hlslCompiler.set_hlsl_options(compileOptions);
+				std::string compilationResult = hlslCompiler.compile();
+				SHADER_SYSTEM_INFO("Cross-compilation result:\n{0}", compilationResult.c_str());
+
+				mGpuShader->AddShaderDomain(compilationResult, domain);
+			}
+			// Metal needs MSL binaries
+			else if (Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::Metal)
+			{
+				spirv_cross::CompilerMSL mslCompiler(binary);
+				spirv_cross::CompilerMSL::Options compileOptions;
+				mslCompiler.set_msl_options(compileOptions);
+				std::string compilationResult = mslCompiler.compile();
+				SHADER_SYSTEM_INFO("Cross-compilation result:\n{0}", compilationResult.c_str());
+
+				mGpuShader->AddShaderDomain(compilationResult, domain);
+			}
+			// OpenGL and Vulkan can understand the spirv binary directly.
+			else
+			{
+				mGpuShader->AddShaderDomain(binary, domain);
+			}
 		}
 
 		if (!mGpuShader->LinkAllShaders())

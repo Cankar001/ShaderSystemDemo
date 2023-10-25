@@ -2,6 +2,14 @@
 
 namespace ShaderSystem
 {
+	DX12Shader::DX12Shader(const BufferLayout &inLayout)
+	{
+	}
+	
+	DX12Shader::~DX12Shader()
+	{
+	}
+	
 	void DX12Shader::Bind() const
 	{
 	}

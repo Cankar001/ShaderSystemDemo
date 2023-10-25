@@ -2,6 +2,7 @@
 
 #include "Core/Core.h"
 #include "Graphics/ShaderBuffer.h"
+#include "Graphics/BufferLayout.h"
 
 #include <string>
 #include <unordered_map>
@@ -27,7 +28,7 @@ namespace ShaderSystem
 		virtual void AddShaderDomain(const std::vector<uint32_t>& inSourceBinary, ShaderDomain inDomain) = 0;
 		virtual const std::vector<uint32_t>& GetShaderDomainBinary(ShaderDomain inDomain) const = 0;
 
-		static Ref<GPUShader> Create();
+		static Ref<GPUShader> Create(const BufferLayout &inLayout);
 
 	protected:
 

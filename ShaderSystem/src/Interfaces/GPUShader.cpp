@@ -7,19 +7,19 @@
 
 namespace ShaderSystem
 {
-	Ref<GPUShader> GPUShader::Create()
+	Ref<GPUShader> GPUShader::Create(const BufferLayout &inLayout)
 	{
 		switch (Renderer::GetCurrentRenderingAPIType())
 		{
 		default:
 		case RenderingAPIType::OpenGL:
-			return MakeRef<OpenGLShader>();
+			return MakeRef<OpenGLShader>(inLayout);
 
 		case RenderingAPIType::DirectX11:
-			return MakeRef<DX11Shader>();
+			return MakeRef<DX11Shader>(inLayout);
 
 		case RenderingAPIType::DirectX12:
-			return MakeRef<DX12Shader>();
+			return MakeRef<DX12Shader>(inLayout);
 
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:

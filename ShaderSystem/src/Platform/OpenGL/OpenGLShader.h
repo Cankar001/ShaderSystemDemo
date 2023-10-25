@@ -2,13 +2,15 @@
 
 #include "Interfaces/GPUShader.h"
 
+#include "Graphics/BufferLayout.h"
+
 namespace ShaderSystem
 {
 	class OpenGLShader : public GPUShader
 	{
 	public:
 
-		OpenGLShader();
+		OpenGLShader(const BufferLayout &inLayout);
 		virtual ~OpenGLShader();
 
 		virtual void Bind() const override;

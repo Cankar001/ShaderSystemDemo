@@ -84,6 +84,8 @@ project "ShaderSystem"
 			
 			"%{LibDir.SPIRV_Cross_Debug}",
 			"%{LibDir.SPIRV_Cross_GLSL_Debug}",
+			"%{LibDir.SPIRV_Cross_HLSL_Debug}",
+			"%{LibDir.SPIRV_Cross_MSL_Debug}",
 			"%{LibDir.SPIRV_Tools_Debug}",
 		}
 
@@ -103,5 +105,7 @@ project "ShaderSystem"
 			
 			"%{LibDir.SPIRV_Cross_Release}",
 			"%{LibDir.SPIRV_Cross_GLSL_Release}",
+			"%{LibDir.SPIRV_Cross_HLSL_Release}",
+			"%{LibDir.SPIRV_Cross_MSL_Release}",
 			"%{LibDir.SPIRV_Tools_Release}",
 		}

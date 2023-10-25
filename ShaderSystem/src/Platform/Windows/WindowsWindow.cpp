@@ -306,6 +306,15 @@ namespace ShaderSystem
 
 		mContext = RenderingContext::Create(mNativeHandle);
 		mContext->Init(mWindowData);
+
+		mCursor = LoadCursorW(NULL, IDC_ARROW);
+		SetCursor(mCursor);
+
+		if (mWindowData.Maximized)
+			Maximize();
+
+		if (mWindowData.Centered)
+			CenterWindow();
 	}
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

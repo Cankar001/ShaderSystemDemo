@@ -38,7 +38,7 @@ namespace ShaderSystem
 		}
 	}
 
-	OpenGLShader::OpenGLShader()
+	OpenGLShader::OpenGLShader(const BufferLayout &inLayout)
 	{
 		mProgramID = glCreateProgram();
 	}

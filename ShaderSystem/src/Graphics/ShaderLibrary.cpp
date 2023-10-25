@@ -25,9 +25,9 @@ namespace ShaderSystem
 		SHADER_SYSTEM_INFO("Added shader '{0}'", name.c_str());
 	}
 	
-	void ShaderLibrary::Load(const std::filesystem::path& filePath, bool forceCompile)
+	void ShaderLibrary::Load(const std::filesystem::path& filePath, const BufferLayout &inLayout, bool forceCompile)
 	{
-		Ref<Shader> shader = Shader::LoadFromFile(filePath, forceCompile);
+		Ref<Shader> shader = Shader::LoadFromFile(filePath, inLayout, forceCompile);
 		if (!shader)
 		{
 			SHADER_SYSTEM_ERROR("Failed to load shader '{0}' into shaderlibrary!", shader->GetName().c_str());
@@ -37,9 +37,9 @@ namespace ShaderSystem
 		Add(shader);
 	}
 	
-	void ShaderLibrary::Load(const std::string& name, const std::filesystem::path& filePath, bool forceCompile)
+	void ShaderLibrary::Load(const std::string& name, const std::filesystem::path& filePath, const BufferLayout &inLayout, bool forceCompile)
 	{
-		Ref<Shader> shader = Shader::LoadFromFile(filePath, forceCompile);
+		Ref<Shader> shader = Shader::LoadFromFile(filePath, inLayout, forceCompile);
 		if (!shader)
 		{
 			SHADER_SYSTEM_ERROR("Failed to load shader '{0}' into shaderlibrary!", name.c_str());
@@ -49,9 +49,9 @@ namespace ShaderSystem
 		Add(name, shader);
 	}
 	
-	void ShaderLibrary::LoadFromString(const std::string& source, ShaderLanguage language)
+	void ShaderLibrary::LoadFromString(const std::string& source, const BufferLayout &inLayout, ShaderLanguage language)
 	{
-		Ref<Shader> shader = Shader::LoadFromString(source, "undefined", language);
+		Ref<Shader> shader = Shader::LoadFromString(source, "undefined", inLayout, language);
 		if (!shader)
 		{
 			SHADER_SYSTEM_ERROR("Failed to load shader '{0}' into shaderlibrary!", shader->GetName().c_str());
@@ -61,9 +61,9 @@ namespace ShaderSystem
 		Add(shader);
 	}
 	
-	void ShaderLibrary::LoadFromString(const std::string& name, const std::string& source, ShaderLanguage language)
+	void ShaderLibrary::LoadFromString(const std::string& name, const std::string& source, const BufferLayout &inLayout, ShaderLanguage language)
 	{
-		Ref<Shader> shader = Shader::LoadFromString(source, name, language);
+		Ref<Shader> shader = Shader::LoadFromString(source, name, inLayout, language);
 		if (!shader)
 		{
 			SHADER_SYSTEM_ERROR("Failed to load shader '{0}' into shaderlibrary!", name.c_str());

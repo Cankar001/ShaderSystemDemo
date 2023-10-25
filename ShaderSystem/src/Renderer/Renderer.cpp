@@ -24,7 +24,13 @@ namespace ShaderSystem
 
 		ShaderCache::Init();
 
-		s_Data->Library->Load("assets/shaders/FlatColorShader.glsl", true);
+		BufferLayout flatColorShaderLayout = {
+			BufferElement("a_Position", ShaderDataType::Float3, false),
+			BufferElement("a_TexCoord", ShaderDataType::Float2, false),
+			BufferElement("a_Color", ShaderDataType::Float4, false)
+		};
+
+		s_Data->Library->Load("assets/shaders/FlatColorShader.glsl", flatColorShaderLayout, true);
 	}
 
 	void Renderer::Shutdown()

@@ -3,11 +3,16 @@
 #include "Core/Core.h"
 #include "Interfaces/GPUShader.h"
 
+#include "Graphics/BufferLayout.h"
+
 namespace ShaderSystem
 {
 	class DX12Shader : public GPUShader
 	{
 	public:
+
+		DX12Shader(const BufferLayout &inLayout);
+		virtual ~DX12Shader();
 
 		virtual void Bind() const override;
 		virtual void Unbind() override;

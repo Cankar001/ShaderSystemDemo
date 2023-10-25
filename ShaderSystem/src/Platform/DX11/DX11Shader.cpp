@@ -147,24 +147,25 @@ namespace ShaderSystem
 	void DX11Shader::AddShaderDomain(const std::string &inSourceString, ShaderDomain inDomain)
 	{
 		HRESULT hr = S_OK;
-		std::string target = "vs_5_0";
+		std::string version = "5_0"; // The shader version
+		std::string target = "vs_" + version;
 
 		switch (inDomain)
 		{
 		case ShaderDomain::Fragment:
-			target = "ps_5_0";
+			target = "ps_" + version;
 			break;
 		case ShaderDomain::Compute:
-			target = "cs_5_0";
+			target = "cs_" + version;
 			break;
 		case ShaderDomain::Geometry:
-			target = "gs_5_0";
+			target = "gs_" + version;
 			break;
 		case ShaderDomain::TessControl:
-			target = "hs_5_0";
+			target = "hs_" + version;
 			break;
 		case ShaderDomain::TessEvalulation:
-			target = "ds_5_0";
+			target = "ds_" + version;
 			break;
 		}
 

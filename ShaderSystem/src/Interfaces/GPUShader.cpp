@@ -3,6 +3,8 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/DX11/DX11Shader.h"
 #include "Platform/DX12/DX12Shader.h"
+#include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/Metal/MetalShader.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -22,8 +24,10 @@ namespace ShaderSystem
 			return MakeRef<DX12Shader>(inLayout);
 
 		case RenderingAPIType::Metal:
+			return MakeRef<MetalShader>(inLayout);
+
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanShader>(inLayout);
 		}
 	}
 }

@@ -6,12 +6,12 @@
 
 namespace ShaderSystem
 {
-	class VulkanShader : public GPUShader
+	class MetalShader : public GPUShader
 	{
 	public:
 
-		VulkanShader(const BufferLayout &inLayout);
-		virtual ~VulkanShader();
+		MetalShader(const BufferLayout &inLayout);
+		virtual ~MetalShader();
 
 		virtual void Bind() const override;
 		virtual void Unbind() override;

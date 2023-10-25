@@ -5,6 +5,7 @@
 
 #include "Platform/OpenGL/OpenGLStorageBuffer.h"
 #include "Platform/DX11/DX11StorageBuffer.h"
+#include "Platform/DX12/DX12StorageBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -88,6 +89,8 @@ namespace ShaderSystem
 			return MakeRef<DX11StorageBuffer>(inSize, inBinding, inLayout);
 
 		case RenderingAPIType::DirectX12:
+			return MakeRef<DX12StorageBuffer>(inSize, inBinding, inLayout);
+
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
 			return nullptr;

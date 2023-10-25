@@ -2,6 +2,7 @@
 
 #include "Platform/OpenGL/OpenGLIndexBuffer.h"
 #include "Platform/DX11/DX11IndexBuffer.h"
+#include "Platform/DX12/DX12IndexBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -18,6 +19,8 @@ namespace ShaderSystem
 			return MakeRef<DX11IndexBuffer>(inIndices);
 
 		case RenderingAPIType::DirectX12:
+			return MakeRef<DX12IndexBuffer>(inIndices);
+
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
 			return nullptr;
@@ -36,6 +39,8 @@ namespace ShaderSystem
 			return MakeRef<DX11IndexBuffer>(inData, inSize);
 
 		case RenderingAPIType::DirectX12:
+			return MakeRef<DX12IndexBuffer>(inData, inSize);
+
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
 			return nullptr;
@@ -54,6 +59,8 @@ namespace ShaderSystem
 			return MakeRef<DX11IndexBuffer>(inSize);
 
 		case RenderingAPIType::DirectX12:
+			return MakeRef<DX12IndexBuffer>(inSize);
+
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
 			return nullptr;

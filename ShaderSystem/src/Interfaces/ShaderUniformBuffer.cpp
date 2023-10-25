@@ -5,6 +5,7 @@
 
 #include "Platform/OpenGL/OpenGLUniformBuffer.h"
 #include "Platform/DX11/DX11UniformBuffer.h"
+#include "Platform/DX12/DX12UniformBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -87,6 +88,8 @@ namespace ShaderSystem
 			return MakeRef<DX11UniformBuffer>(inSize, inBinding, inLayout);
 
 		case RenderingAPIType::DirectX12:
+			return MakeRef<DX12UniformBuffer>(inSize, inBinding, inLayout);
+
 		case RenderingAPIType::Metal:
 		case RenderingAPIType::Vulkan:
 			return nullptr;

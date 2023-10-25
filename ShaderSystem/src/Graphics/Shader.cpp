@@ -333,7 +333,8 @@ namespace ShaderSystem
 		std::unordered_map<ShaderDomain, std::string> result = ShaderPreProcessor::PreprocessShader<ShaderLanguage::GLSL>(inSource, mAcknowledgedMacros);
 		shaderc::Compiler compiler;
 
-		// If any shader source is compute and the shader source count is 1, the whole shader is considered a compute shader
+		// NOTE: If any shader stage is compute and the shader source count is 1, 
+		// the whole shader is considered a compute shader, because commonly a compute shader would be the only shader stage in a shader file.
 		if (result.size() == 1)
 		{
 			for (auto& [domain, shaderSource] : result)
@@ -542,10 +543,7 @@ namespace ShaderSystem
 			}
 		}
 
-#if PRINT_DEBUG_OUTPUTS
-		HL_CORE_TRACE("Sampled Images: {0}", resources.sampled_images.size());
-#endif // PRINT_DEBUG_OUTPUTS
-
+		SHADER_SYSTEM_TRACE("Sampled Images: {0}", resources.sampled_images.size());
 		for (const auto& resource : resources.sampled_images)
 		{
 			const auto& name = resource.name;
@@ -692,7 +690,7 @@ namespace ShaderSystem
 			bool optimize = false;
 #ifdef SHADER_SYSTEM_RELEASE
 			optimize = true;
-#endif // HL_RELEASE
+#endif // SHADER_SYSTEM_RELEASE
 
 			if (optimize)
 				options.SetOptimizationLevel(shaderc_optimization_level_performance);

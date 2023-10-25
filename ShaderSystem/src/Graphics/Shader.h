@@ -60,8 +60,8 @@ namespace ShaderSystem
 
 		// Shader-compilation
 		std::string Compile(std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outOutputBinary, const ShaderDomain inDomain) const;
-		void CompileOrGetOpenGLBinary(std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, bool inForceCompile);
-		void TryGetOpenGLCachedBinary(const std::filesystem::path& inCacheDirectory, const std::string& inExtension, std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, ShaderDomain inDomain) const;
+		void CompileOrGetShaderBinary(std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, bool inForceCompile);
+		void TryGetShaderCachedBinary(const std::filesystem::path& inCacheDirectory, const std::string& inExtension, std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, ShaderDomain inDomain) const;
 		void LoadAndCreateShaders(const std::unordered_map<ShaderDomain, std::vector<uint32_t>>& inShaderData);
 
 		void ParseConstantBuffers(const spirv_cross::CompilerGLSL& compiler);

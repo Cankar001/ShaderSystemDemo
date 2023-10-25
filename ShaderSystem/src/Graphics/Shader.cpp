@@ -207,7 +207,7 @@ namespace ShaderSystem
 		}
 		else
 		{
-			SHADER_SYSTEM_FATAL("Could not find shader '{0}'. Shader constructor invalid.", mFilePath.string().c_str());
+			SHADER_SYSTEM_FATAL("Could not find shader '{0}'.", mFilePath.string().c_str());
 		}
 	}
 
@@ -225,16 +225,32 @@ namespace ShaderSystem
 	
 	void Shader::Reload(bool inForceCompile)
 	{
-		Release();
-
-		std::string source = FileSystem::ReadTextFile(mFilePath);
-
-		Load(source, inForceCompile);
-
-		Renderer::OnShaderReloaded(GetHash());
-
-		for (ShaderReloadedCallback callback : mReloadedCallbacks)
-			callback();
+		if (!mFilePath.empty())
+		{
+			if (FileSystem::FileExists(mFilePath))
+			{
+				// Release the current resources
+				Release();
+			
+				// do the actual reload process
+				std::string source = FileSystem::ReadTextFile(mFilePath);
+				Load(source, inForceCompile);
+				
+				// Notify the system that this has been reloaded.
+				Renderer::OnShaderReloaded(GetHash());
+				for (ShaderReloadedCallback callback : mReloadedCallbacks)
+					callback();
+			}
+			else
+			{
+				SHADER_SYSTEM_ERROR("Reload failed: shader file {0} does not exist anymore.", mFilePath.string().c_str());
+			}
+		}
+		else
+		{
+			// TODO: make a setter that lets set the shader source and then change this to also reload the new source.
+			SHADER_SYSTEM_INFO("Reloading from string not supported yet.");
+		}
 	}
 	
 	void Shader::Release()
@@ -287,28 +303,21 @@ namespace ShaderSystem
 
 	void Shader::Load(const std::string& inSource, bool inForceCompile)
 	{
-		if (FileSystem::FileExists(mFilePath))
-		{
-			SHADER_SYSTEM_TRACE("Loading shader '{0}'...", mName.c_str());
+		SHADER_SYSTEM_TRACE("Loading shader '{0}'...", mName.c_str());
 
-			mShaderSources = PreProcess(inSource);
+		mShaderSources = PreProcess(inSource);
 
-			bool shaderCacheHasChanged = ShaderCache::HasChanged(mFilePath, inSource);
-			std::unordered_map<ShaderDomain, std::vector<uint32_t>> shaderData;
+		bool shaderCacheHasChanged = ShaderCache::HasChanged(mFilePath, inSource);
+		std::unordered_map<ShaderDomain, std::vector<uint32_t>> shaderData;
 
-			// TODO: Move this to gpu shader or make the content general.
-			CompileOrGetOpenGLBinary(shaderData, inForceCompile || shaderCacheHasChanged);
+		// TODO: make the content general.
+		CompileOrGetShaderBinary(shaderData, inForceCompile || shaderCacheHasChanged);
 
-			LoadAndCreateShaders(shaderData);
-			ReflectAllShaderStages(shaderData);
+		LoadAndCreateShaders(shaderData);
+		ReflectAllShaderStages(shaderData);
 
-			SHADER_SYSTEM_INFO("Shader '{0}' loaded", mFilePath.string().c_str());
-			mLoaded = true;
-		}
-		else
-		{
-			SHADER_SYSTEM_ERROR("Could not find shader '{0}'", mFilePath.string().c_str());
-		}
+		SHADER_SYSTEM_INFO("Shader '{0}' loaded", mFilePath.string().c_str());
+		mLoaded = true;
 	}
 	
 	std::unordered_map<ShaderDomain, std::string> Shader::PreProcess(const std::string& inSource)
@@ -347,7 +356,7 @@ namespace ShaderSystem
 			}
 		}
 
-		SHADER_SYSTEM_TRACE("Pre-processing GLSL: {0} [+]", mFilePath.string().c_str());
+		SHADER_SYSTEM_TRACE("Pre-processing GLSL: {0}", mFilePath.string().c_str());
 
 		shaderc_util::FileFinder fileFinder;
 		fileFinder.search_path().emplace_back("assets/shaders/Include/GLSL/");
@@ -374,7 +383,7 @@ namespace ShaderSystem
 			shaderc::PreprocessedSourceCompilationResult preProcessingResult = compiler.PreprocessGlsl(shaderSource.c_str(), utils::ShaderStageToShaderC(domain), mFilePath.string().c_str(), options);
 			if (preProcessingResult.GetCompilationStatus() != shaderc_compilation_status_success)
 			{
-				SHADER_SYSTEM_ERROR("Failed to pre-process Shader {0} with error {1} [-]", mFilePath.string().c_str(), preProcessingResult.GetErrorMessage().c_str());
+				SHADER_SYSTEM_ERROR("Failed to pre-process Shader {0} with error {1}", mFilePath.string().c_str(), preProcessingResult.GetErrorMessage().c_str());
 				SHADER_SYSTEM_ASSERT(false);
 			}
 
@@ -408,9 +417,9 @@ namespace ShaderSystem
 	
 	void Shader::Reflect(ShaderDomain shaderStage, const std::vector<uint32_t>& inShaderData)
 	{
-		SHADER_SYSTEM_TRACE("===========================");
-		SHADER_SYSTEM_TRACE(" OpenGL Shader Reflection ");
-		SHADER_SYSTEM_TRACE("===========================");
+		SHADER_SYSTEM_TRACE("===============================");
+		SHADER_SYSTEM_TRACE(" {0} Shader Reflection ", Renderer::GetCurrentRenderingAPI()->ToString());
+		SHADER_SYSTEM_TRACE("===============================");
 
 		spirv_cross::Compiler compiler(inShaderData);
 		auto& resources = compiler.get_shader_resources();
@@ -668,6 +677,9 @@ namespace ShaderSystem
 		}
 
 		SHADER_SYSTEM_TRACE("===========================");
+
+		spirv_cross::CompilerGLSL glsl(inShaderData);
+		ParseConstantBuffers(glsl);
 	}
 	
 	void Shader::LoadCachedReflectionData()
@@ -706,13 +718,13 @@ namespace ShaderSystem
 		}
 		else if (mLanguage == ShaderLanguage::HLSL)
 		{
-			// TODO
+			// TODO: compile code with dxcompiler and enable spv backend in the compiler
 		}
 
 		return "unknown Language!";
 	}
 
-	void Shader::CompileOrGetOpenGLBinary(std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, bool inForceCompile)
+	void Shader::CompileOrGetShaderBinary(std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, bool inForceCompile)
 	{
 		std::filesystem::path cacheDirectory = utils::GetCacheDirectory();
 
@@ -726,7 +738,7 @@ namespace ShaderSystem
 			const std::string& extension = utils::ShaderDomainCachedFileExtension(domain);
 			if (!inForceCompile)
 			{
-				TryGetOpenGLCachedBinary(cacheDirectory, extension, outBinary, domain);
+				TryGetShaderCachedBinary(cacheDirectory, extension, outBinary, domain);
 			}
 
 			if (outBinary[domain].empty())
@@ -752,7 +764,7 @@ namespace ShaderSystem
 				{
 					SHADER_SYSTEM_ERROR("{0}", error.c_str());
 
-					TryGetOpenGLCachedBinary(cacheDirectory, extension, outBinary, domain);
+					TryGetShaderCachedBinary(cacheDirectory, extension, outBinary, domain);
 					if (outBinary[domain].empty())
 					{
 						SHADER_SYSTEM_ASSERT(false, "Failed to compile shader and could not find any cached binary!");
@@ -767,7 +779,7 @@ namespace ShaderSystem
 		}
 	}
 	
-	void Shader::TryGetOpenGLCachedBinary(const std::filesystem::path& inCacheDirectory, const std::string& inExtension, std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, ShaderDomain inDomain) const
+	void Shader::TryGetShaderCachedBinary(const std::filesystem::path& inCacheDirectory, const std::string& inExtension, std::unordered_map<ShaderDomain, std::vector<uint32_t>>& outBinary, ShaderDomain inDomain) const
 	{
 		std::filesystem::path p = inCacheDirectory / (mFilePath.filename().string() + inExtension);
 
@@ -798,7 +810,52 @@ namespace ShaderSystem
 			SHADER_SYSTEM_ERROR("Failed to link shader!");
 		}
 	}
+
 	void Shader::ParseConstantBuffers(const spirv_cross::CompilerGLSL& compiler)
 	{
+		// Push constant ranges
+		spirv_cross::ShaderResources res = compiler.get_shader_resources();
+		for (const spirv_cross::Resource &resource : res.push_constant_buffers)
+		{
+			const std::string &name = resource.name;
+			auto &type = compiler.get_type(resource.base_type_id);
+			auto bufferSize = (uint32_t)compiler.get_declared_struct_size(type);
+			uint32_t binding = (uint32_t)compiler.get_decoration(resource.id, spv::DecorationBinding);
+			uint32_t memberCount = (uint32_t)type.member_types.size();
+			uint32_t bufferOffset = 0;
+
+			if (mPushConstantRanges.size())
+				bufferOffset = mPushConstantRanges.back().Offset + mPushConstantRanges.back().Size;
+
+			auto &pushConstantRange = mPushConstantRanges.emplace_back();
+			pushConstantRange.Size = bufferSize - bufferOffset;
+			pushConstantRange.Offset = bufferOffset;
+
+			if (name.empty())
+			{
+				mConstantBufferOffset += bufferSize;
+				continue;
+			}
+
+			ShaderBuffer &buffer = mBuffers[name];
+			buffer.Name = name;
+			buffer.Size = bufferSize - bufferOffset;
+
+			for (uint32_t i = 0; i < memberCount; ++i)
+			{
+				auto memberType = compiler.get_type(type.member_types[i]);
+				const std::string &memberName = compiler.get_member_name(type.self, i);
+				uint32_t size = (uint32_t)compiler.get_declared_struct_member_size(type, i);
+				uint32_t offset = compiler.type_struct_member_offset(type, i) - bufferOffset;
+
+				std::string uniformName = fmt::format("{}.{}", name.c_str(), memberName.c_str());
+
+				SHADER_SYSTEM_INFO("Registering push_constant with uniform name {0}", uniformName.c_str());
+
+				buffer.Uniforms[uniformName] = ShaderUniform(uniformName, binding, utils::SPIRTypeToShaderUniformType(type), size, offset);
+			}
+
+			mConstantBufferOffset += bufferSize;
+		}
 	}
 }

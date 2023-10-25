@@ -157,6 +157,15 @@ namespace ShaderSystem
 		case ShaderDomain::Compute:
 			target = "cs_5_0";
 			break;
+		case ShaderDomain::Geometry:
+			target = "gs_5_0";
+			break;
+		case ShaderDomain::TessControl:
+			target = "hs_5_0";
+			break;
+		case ShaderDomain::TessEvalulation:
+			target = "ds_5_0";
+			break;
 		}
 
 		// Compile the vertex shader code

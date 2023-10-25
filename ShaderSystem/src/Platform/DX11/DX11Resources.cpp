@@ -9,4 +9,6 @@ namespace ShaderSystem
 	ComPtr<ID3D11DepthStencilState> DX11Resources::sDepthStencilState = nullptr;
 	ComPtr<ID3D11DepthStencilView>	DX11Resources::sDepthStencilView = nullptr;
 	ComPtr<ID3D11SamplerState>		DX11Resources::sSamplerState = nullptr;
+	ComPtr<ID3D11Texture2D>			DX11Resources::sRenderTarget = nullptr;
+	ComPtr<ID3D11Texture2D>			DX11Resources::sDepthStencil = nullptr;
 }

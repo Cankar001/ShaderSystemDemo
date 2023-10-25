@@ -17,13 +17,23 @@ namespace ShaderSystem
 		virtual void Init(const WindowData &inData) override;
 		virtual void MakeCurrent() override;
 
+		virtual void SwapBuffers() override;
+
 		virtual void *GetCurrentContext() override;
 
 	private:
 
+		void CreateDeviceResources();
+		void CreateWindowDependentResources();
+		void CreateFactory();
+		void GetHardwareAdapter(IDXGIAdapter1 **outAdapter);
+
+#if 0
 		void InitializeSwapChain();
 		void InitializeRenderTargetView();
 		void InitializeDepthStencilViewAndBuffer();
+#endif
+
 		void InitializeDepthStencilState();
 		void InitializeViewPort();
 		void InitializeRasterizerState();
@@ -32,11 +42,20 @@ namespace ShaderSystem
 
 	private:
 
-		HWND mWindowHandle;
+		void *mWindowHandle;
+		HWND mNativeWindowHandle;
 		WindowData mWindowProperties;
 
-		ComPtr<IDXGISwapChain>	 mSwapChain;
+		ComPtr<IDXGISwapChain1>	 mSwapChain;
 		ComPtr<ID3D11Texture2D>	 mDepthStencilBuffer;
 		ComPtr<ID3D11BlendState> mBlendState;
+		ComPtr<IDXGIFactory2>	 mFactory;
+
+		RECT mOutputSize;
+		CD3D11_VIEWPORT mViewport;
+		D3D_FEATURE_LEVEL mFeatureLevel;
+		UINT mBackbufferCount;
+		DXGI_FORMAT mBackbufferFormat;
+		DXGI_FORMAT mDepthBufferFormat;
 	};
 }

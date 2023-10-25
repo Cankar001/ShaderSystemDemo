@@ -31,6 +31,10 @@ namespace ShaderSystem
 	{
 		glfwMakeContextCurrent((GLFWwindow*)mWindowHandle);
 	}
+
+	void OpenGLContext::SwapBuffers()
+	{
+	}
 	
 	void* OpenGLContext::GetCurrentContext()
 	{
@@ -94,6 +98,10 @@ namespace ShaderSystem
 	void OpenGLContext::MakeCurrent()
 	{
 		wglMakeCurrent(dc, rc);
+	}
+
+	void OpenGLContext::SwapBuffers()
+	{
 	}
 
 	void* OpenGLContext::GetCurrentContext()

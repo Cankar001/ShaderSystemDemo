@@ -1,25 +1,27 @@
 #pragma once
 
+#include "Core/Core.h"
 #include "Interfaces/RenderingContext.h"
 
 namespace ShaderSystem
 {
-	class OpenGLContext : public RenderingContext
+	class DX12Context : public RenderingContext
 	{
 	public:
 
-		OpenGLContext(void* inWindowHandle);
-		virtual ~OpenGLContext();
+		DX12Context(void *inWindowHandle);
+		virtual ~DX12Context();
 
 		virtual void Init(const WindowData &inData) override;
 		virtual void MakeCurrent() override;
 
 		virtual void SwapBuffers() override;
 
-		virtual void* GetCurrentContext() override;
+		virtual void *GetCurrentContext() override;
 
 	private:
 
-		void* mWindowHandle;
+		void *mWindowHandle;
+		WindowData mWindowProperties;
 	};
 }

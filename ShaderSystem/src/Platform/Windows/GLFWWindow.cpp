@@ -43,6 +43,8 @@ namespace ShaderSystem
 		glfwPollEvents();
 		
 		glfwSwapBuffers(mNativeHandle);
+
+		mContext->SwapBuffers();
 	}
 	
 	void GLFWWindow::SetWindowIcon(const std::string& path, bool flip)

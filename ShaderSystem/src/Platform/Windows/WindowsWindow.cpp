@@ -57,6 +57,8 @@ namespace ShaderSystem
 		}
 
 		SwapBuffers((HDC)mContext->GetCurrentContext());
+
+		mContext->SwapBuffers();
 	}
 	
 	void WindowsWindow::SetWindowIcon(const std::string& path, bool flip)

@@ -22,6 +22,18 @@ cd ShaderSystemDemo/Scripts && python Setup.py
 
 Now you should see the solution file in the root directory of the project. Just open it and build either the Debug or Release build.
 
+## Supported platforms
+
+| Windows | Linux | MacOS | Android | IOS | Web |
+|:--------:| :-: | :-: | :-: | :-: | :-: |
+| ✓    | X | X | X | X | X |
+
+## Supported rendering APIs
+
+| OpenGL | Vulkan | DirectX 11 | DirectX 12 | Metal |
+|:--------:| :-: | :-: | :-: | :-: |
+| ✓    | X | ✓ | X | X |
+
 ## How it works
 
 By default, the demo will use OpenGL in combination with the GLSL demo shader. If you go into the `Main.cpp` file, you should see this function call:

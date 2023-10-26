@@ -29,7 +29,7 @@ namespace ShaderSystem
 	
 	bool MetalShader::LinkAllShaders()
 	{
-		return false;
+		return true;
 	}
 	
 	void MetalShader::AddShaderDomain(const std::string &inSourceString, ShaderDomain inDomain)

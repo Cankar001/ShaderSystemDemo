@@ -3,6 +3,7 @@
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 #include "Platform/DX11/DX11VertexArray.h"
 #include "Platform/DX12/DX12VertexArray.h"
+#include "Platform/Metal/MetalVertexArray.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -22,6 +23,8 @@ namespace ShaderSystem
 			return MakeRef<DX12VertexArray>();
 
 		case RenderingAPIType::Metal:
+			return MakeRef<MetalVertexArray>();
+
 		case RenderingAPIType::Vulkan:
 			return nullptr;
 		}

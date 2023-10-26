@@ -5,6 +5,7 @@
 #include "Platform/OpenGL/OpenGLContext.h"
 #include "Platform/DX11/DX11Context.h"
 #include "Platform/DX12/DX12Context.h"
+#include "Platform/Metal/MetalContext.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -24,6 +25,8 @@ namespace ShaderSystem
             return MakeRef<DX12Context>(inWindowHandle);
 
         case RenderingAPIType::Metal:
+            return MakeRef<MetalContext>(inWindowHandle);
+
         case RenderingAPIType::Vulkan:
             return nullptr;
         }

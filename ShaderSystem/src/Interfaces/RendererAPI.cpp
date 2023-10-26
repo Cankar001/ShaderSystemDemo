@@ -3,6 +3,7 @@
 #include "Platform/OpenGL/OpenGLRenderer.h"
 #include "Platform/DX11/DX11Renderer.h"
 #include "Platform/DX12/DX12Renderer.h"
+#include "Platform/Metal/MetalRenderer.h"
 
 namespace ShaderSystem
 {
@@ -21,6 +22,8 @@ namespace ShaderSystem
 			return MakeRef<DX12Renderer>(inType);
 
 		case RenderingAPIType::Metal:
+			return MakeRef<MetalRenderer>(inType);
+
 		case RenderingAPIType::Vulkan:
 			return nullptr;
 		}

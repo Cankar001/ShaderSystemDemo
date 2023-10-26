@@ -3,6 +3,7 @@
 #include "Platform/OpenGL/OpenGLVertexBuffer.h"
 #include "Platform/DX11/DX11VertexBuffer.h"
 #include "Platform/DX12/DX12VertexBuffer.h"
+#include "Platform/Metal/MetalVertexBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -22,6 +23,8 @@ namespace ShaderSystem
 			return MakeRef<DX12VertexBuffer>(inData, inSize);
 
 		case RenderingAPIType::Metal:
+			return MakeRef<MetalVertexBuffer>(inData, inSize);
+
 		case RenderingAPIType::Vulkan:
 			return nullptr;
 		}
@@ -42,6 +45,8 @@ namespace ShaderSystem
 			return MakeRef<DX12VertexBuffer>(inSize);
 
 		case RenderingAPIType::Metal:
+			return MakeRef<MetalVertexBuffer>(inSize);
+
 		case RenderingAPIType::Vulkan:
 			return nullptr;
 		}

@@ -4,6 +4,7 @@
 #include "Platform/DX11/DX11IndexBuffer.h"
 #include "Platform/DX12/DX12IndexBuffer.h"
 #include "Platform/Metal/MetalIndexBuffer.h"
+#include "Platform/Vulkan/VulkanIndexBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -26,7 +27,7 @@ namespace ShaderSystem
 			return MakeRef<MetalIndexBuffer>(inIndices);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanIndexBuffer>(inIndices);
 		}
 	}
 
@@ -48,7 +49,7 @@ namespace ShaderSystem
 			return MakeRef<MetalIndexBuffer>(inData, inSize);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanIndexBuffer>(inData, inSize);
 		}
 	}
 	
@@ -70,7 +71,7 @@ namespace ShaderSystem
 			return MakeRef<MetalIndexBuffer>(inSize);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanIndexBuffer>(inSize);
 		}
 	}
 }

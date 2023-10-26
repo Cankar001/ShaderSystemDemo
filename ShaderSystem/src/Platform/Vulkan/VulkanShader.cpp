@@ -29,7 +29,7 @@ namespace ShaderSystem
 	
 	bool VulkanShader::LinkAllShaders()
 	{
-		return false;
+		return true;
 	}
 	
 	void VulkanShader::AddShaderDomain(const std::string &inSourceString, ShaderDomain inDomain)

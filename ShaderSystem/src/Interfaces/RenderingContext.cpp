@@ -6,6 +6,7 @@
 #include "Platform/DX11/DX11Context.h"
 #include "Platform/DX12/DX12Context.h"
 #include "Platform/Metal/MetalContext.h"
+#include "Platform/Vulkan/VulkanContext.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -28,7 +29,7 @@ namespace ShaderSystem
             return MakeRef<MetalContext>(inWindowHandle);
 
         case RenderingAPIType::Vulkan:
-            return nullptr;
+            return MakeRef<VulkanContext>(inWindowHandle);
         }
     }
 }

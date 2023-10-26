@@ -4,6 +4,7 @@
 #include "Platform/DX11/DX11Renderer.h"
 #include "Platform/DX12/DX12Renderer.h"
 #include "Platform/Metal/MetalRenderer.h"
+#include "Platform/Vulkan/VulkanRenderer.h"
 
 namespace ShaderSystem
 {
@@ -25,7 +26,7 @@ namespace ShaderSystem
 			return MakeRef<MetalRenderer>(inType);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanRenderer>(inType);
 		}
 	}
 

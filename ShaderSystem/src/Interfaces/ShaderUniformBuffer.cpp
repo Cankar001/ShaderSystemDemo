@@ -7,6 +7,7 @@
 #include "Platform/DX11/DX11UniformBuffer.h"
 #include "Platform/DX12/DX12UniformBuffer.h"
 #include "Platform/Metal/MetalUniformBuffer.h"
+#include "Platform/Vulkan/VulkanUniformBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -95,7 +96,7 @@ namespace ShaderSystem
 			return MakeRef<MetalUniformBuffer>(inSize, inBinding, inLayout);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanUniformBuffer>(inSize, inBinding, inLayout);
 		}
 	}
 }

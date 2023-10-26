@@ -7,6 +7,7 @@
 #include "Platform/DX11/DX11StorageBuffer.h"
 #include "Platform/DX12/DX12StorageBuffer.h"
 #include "Platform/Metal/MetalStorageBuffer.h"
+#include "Platform/Vulkan/VulkanStorageBuffer.h"
 #include "Renderer/Renderer.h"
 
 namespace ShaderSystem
@@ -96,7 +97,7 @@ namespace ShaderSystem
 			return MakeRef<MetalStorageBuffer>(inSize, inBinding, inLayout);
 
 		case RenderingAPIType::Vulkan:
-			return nullptr;
+			return MakeRef<VulkanStorageBuffer>(inSize, inBinding, inLayout);
 		}
 	}
 }

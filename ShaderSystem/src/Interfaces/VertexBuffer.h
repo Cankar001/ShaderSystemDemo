@@ -8,7 +8,7 @@ namespace ShaderSystem
 	{
 	public:
 
-		virtual ~VertexBuffer() = default;
+		virtual ~VertexBuffer() {}
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;

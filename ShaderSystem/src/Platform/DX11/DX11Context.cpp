@@ -293,7 +293,7 @@ namespace ShaderSystem
 	void DX11Context::CreateFactory()
 	{
 		HRESULT hr = E_FAIL;
-#ifdef SHADER_SYSTEM_DEBUG && (_WIN32_WINNT >= 0x0603 /*_WIN32_WINNT_WINBLUE*/)
+#if defined(SHADER_SYSTEM_DEBUG) && (_WIN32_WINNT >= 0x0603 /*_WIN32_WINNT_WINBLUE*/)
 		bool debugDXGI = false;
 		{
 			ComPtr<IDXGIInfoQueue> info_queue;

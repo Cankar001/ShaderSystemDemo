@@ -1,26 +1,30 @@
 #version 450 core
 #pragma shader:vertex
 
+// Vertex attributes
 struct vs_in
 {
-    float3 pos : POS;
-    float2 uv0 : TEXCOORD0;
-    float4 color;
+    float3 pos   : POS;
+    float2 uv0   : TEXCOORD0;
+    float4 color : COLOR0;
 };
 
+// DTO
 struct vs_out
 {
-    float4 pos      : SV_POSITION,
-	float2 uv0      : TEXCOORD0,
-	float4 color    : COLOR0
+    float4 pos   : SV_POSITION;
+	float2 uv0   : TEXCOORD0;
+	float4 color : COLOR0;
 };
 
+// Uniform buffer 1
 cbuffer global_ubo : register(b0)
 {
     matrix Projection;
     matrix View;
 } global_ubo;
 
+// Uniform buffer 2
 cbuffer u_push_constants : register(b1)
 {
     matrix Model;
@@ -40,9 +44,9 @@ vs_out main(vs_in input)
 
 struct vs_out
 {
-    float4 pos      : SV_POSITION,
-	float2 uv0      : TEXCOORD0,
-	float4 color
+    float4 pos   : SV_POSITION;
+	float2 uv0   : TEXCOORD0;
+	float4 color : COLOR0;
 };
 
 float4 main(vs_out input)

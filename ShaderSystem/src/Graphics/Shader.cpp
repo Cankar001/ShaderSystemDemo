@@ -10,6 +10,8 @@
 #include "GLSLIncluder.h"
 #include "ShaderCache.h"
 
+#include <regex>
+
 #include <shaderc/shaderc.hpp>
 #include <libshaderc_util/file_finder.h>
 
@@ -826,9 +828,14 @@ namespace ShaderSystem
 				compileOptions.shader_model = 500;
 				hlslCompiler.set_hlsl_options(compileOptions);
 				std::string compilationResult = hlslCompiler.compile();
-				SHADER_SYSTEM_INFO("Cross-compilation result:\n{0}", compilationResult.c_str());
 
-				mGpuShader->AddShaderDomain(compilationResult, domain);
+				// HACK: Remove space qualifiers, as they are not supported currently.
+				std::regex pattern(", space[0-9]");
+
+				std::string validCompilationResult = std::regex_replace(compilationResult, pattern, "");
+				SHADER_SYSTEM_INFO("Cross-compilation result:\n{0}", validCompilationResult.c_str());
+
+				mGpuShader->AddShaderDomain(validCompilationResult, domain);
 			}
 			// Metal needs MSL binaries
 			else if (Renderer::GetCurrentRenderingAPIType() == RenderingAPIType::Metal)
@@ -837,7 +844,6 @@ namespace ShaderSystem
 				spirv_cross::CompilerMSL::Options compileOptions;
 				mslCompiler.set_msl_options(compileOptions);
 				std::string compilationResult = mslCompiler.compile();
-				SHADER_SYSTEM_INFO("Cross-compilation result:\n{0}", compilationResult.c_str());
 
 				mGpuShader->AddShaderDomain(compilationResult, domain);
 			}

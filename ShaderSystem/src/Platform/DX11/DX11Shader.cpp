@@ -41,6 +41,41 @@ namespace ShaderSystem
 				return DXGI_FORMAT_UNKNOWN;
 			}
 		}
+
+		static UINT SizeOfFormatElement(ShaderDataType inType)
+		{
+			switch (inType)
+			{
+			case ShaderDataType::Float:
+				return 4;
+			case ShaderDataType::Int:
+				return 4;
+			case ShaderDataType::Bool:
+				return 1;
+			case ShaderDataType::Float2:
+				return 8;
+			case ShaderDataType::Float3:
+				return 12;
+			case ShaderDataType::Float4:
+				return 16;
+			case ShaderDataType::Int2:
+				return 8;
+			case ShaderDataType::Int3:
+				return 12;
+			case ShaderDataType::Int4:
+				return 16;
+
+			case ShaderDataType::Mat3:
+				return 3 * 3 * 4;
+
+			case ShaderDataType::Mat4:
+				return 4 * 4 * 4;
+
+			case ShaderDataType::None:
+			default:
+				return 0;
+			}
+		}
 	}
 
 	DX11Shader::DX11Shader(const BufferLayout &inLayout)
@@ -49,13 +84,23 @@ namespace ShaderSystem
 		mLayoutElementCount = inLayout.GetElementCount();
 
 		UINT i = 0;
+		UINT offset = 0;
 		for (const auto &element : inLayout)
 		{
-			mLayoutElements[i].Format = utils::BufferTypeToDX11Type(element.Type);
-			mLayoutElements[i].InputSlot = i;
-			mLayoutElements[i].SemanticName = element.Name.c_str();
+			mLayoutElements[i].SemanticName = "TEXCOORD";
 			mLayoutElements[i].SemanticIndex = i;
+			mLayoutElements[i].Format = utils::BufferTypeToDX11Type(element.Type);
+			mLayoutElements[i].InputSlot = 0;
+			mLayoutElements[i].AlignedByteOffset = offset;
+			mLayoutElements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			mLayoutElements[i].InstanceDataStepRate = 0;
 			++i;
+
+			SHADER_SYSTEM_INFO("Semantic name and index: {0}/{1}", 
+							   element.Name.c_str(),
+							   i);
+
+			offset += utils::SizeOfFormatElement(element.Type);
 		}
 	}
 

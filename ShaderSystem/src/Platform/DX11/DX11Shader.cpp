@@ -87,19 +87,15 @@ namespace ShaderSystem
 		UINT offset = 0;
 		for (const auto &element : inLayout)
 		{
-			mLayoutElements[i].SemanticName = "TEXCOORD";
+			mLayoutElements[i].SemanticName = "TEXCOORD"; // HACK: every name is called TEXCOORD in the SPIR-V parser
 			mLayoutElements[i].SemanticIndex = i;
 			mLayoutElements[i].Format = utils::BufferTypeToDX11Type(element.Type);
 			mLayoutElements[i].InputSlot = 0;
 			mLayoutElements[i].AlignedByteOffset = offset;
 			mLayoutElements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 			mLayoutElements[i].InstanceDataStepRate = 0;
+			
 			++i;
-
-			SHADER_SYSTEM_INFO("Semantic name and index: {0}/{1}", 
-							   element.Name.c_str(),
-							   i);
-
 			offset += utils::SizeOfFormatElement(element.Type);
 		}
 	}
@@ -109,63 +105,37 @@ namespace ShaderSystem
 		delete[] mLayoutElements;
 	}
 	
-	void DX11Shader::Bind() const
+	void DX11Shader::Bind(ShaderDomain inDomain) const
 	{
-
-		if (mVertexShader)
+		if (inDomain == ShaderDomain::Vertex)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::Vertex);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}
-
 			DX11Resources::sDeviceContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
 		}
-		else if (mPixelShader)
+		else if (inDomain == ShaderDomain::Fragment)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::Fragment);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}			
 			DX11Resources::sDeviceContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
 		}
-		else if (mComputeShader)
+		else if (inDomain == ShaderDomain::Compute)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::Compute);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}
 			DX11Resources::sDeviceContext->CSSetShader(mComputeShader.Get(), nullptr, 0);
 		}
-		else if (mGeometryShader)
+		else if (inDomain == ShaderDomain::Geometry)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::Geometry);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}
 			DX11Resources::sDeviceContext->GSSetShader(mGeometryShader.Get(), nullptr, 0);
 		}
-		else if (mHullShader)
+		else if (inDomain == ShaderDomain::TessControl)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::TessControl);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}
 			DX11Resources::sDeviceContext->HSSetShader(mHullShader.Get(), nullptr, 0);
 		}
-		else if (mDomainShader)
+		else if (inDomain == ShaderDomain::TessEvalulation)
 		{
-			auto it = mInputLayouts.find(ShaderDomain::TessEvalulation);
-			if (it != mInputLayouts.end())
-			{
-				DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-			}
 			DX11Resources::sDeviceContext->DSSetShader(mDomainShader.Get(), nullptr, 0);
+		}
+
+		auto it = mInputLayouts.find(inDomain);
+		if (it != mInputLayouts.end())
+		{
+			DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
 		}
 	}
 	

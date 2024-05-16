@@ -271,9 +271,9 @@ namespace ShaderSystem
 		return HashString(mFilePath.string());
 	}
 	
-	void Shader::Bind() const
+	void Shader::Bind(ShaderDomain inDomain) const
 	{
-		mGpuShader->Bind();
+		mGpuShader->Bind(inDomain);
 	}
 	
 	void Shader::Unbind()

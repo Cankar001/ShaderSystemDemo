@@ -3,6 +3,8 @@
 #include "Core/Core.h"
 #include "Interfaces/ShaderUniformBuffer.h"
 
+#include "DX11Resources.h"
+
 namespace ShaderSystem
 {
 	class DX11UniformBuffer : public UniformBuffer
@@ -19,6 +21,6 @@ namespace ShaderSystem
 
 	private:
 
-
+		ComPtr<ID3D11Buffer> mBuffer;
 	};
 }

@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
 
 		vbo->Bind();
 		ibo->Bind();
-		flatColorShader->Bind();
+		flatColorShader->Bind(ShaderDomain::Vertex);
 
 		// TODO: Update camera
 

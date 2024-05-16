@@ -10,7 +10,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	void MetalShader::Bind() const
+	void MetalShader::Bind(ShaderDomain inDomain) const
 	{
 	}
 	

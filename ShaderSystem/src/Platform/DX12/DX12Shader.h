@@ -14,7 +14,7 @@ namespace ShaderSystem
 		DX12Shader(const BufferLayout &inLayout);
 		virtual ~DX12Shader();
 
-		virtual void Bind() const override;
+		virtual void Bind(ShaderDomain inDomain) const override;
 		virtual void Unbind() override;
 		virtual uint32_t GetRendererID() const override;
 

@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 	properties.Height = 720;
 	properties.Maximized = true;
 
-	Renderer::SelectRenderingBackend(RenderingAPIType::DirectX11);
+	Renderer::SelectRenderingBackend(RenderingAPIType::OpenGL);
 
 	Ref<Window> mainWindow = Window::Create(properties);
 	mainWindow->SetEventCallback(SHADER_SYSTEM_BIND_EVENT_FN(onEvent));
@@ -139,13 +139,19 @@ int main(int argc, char* argv[])
 
 		vbo->Bind();
 		ibo->Bind();
-		flatColorShader->Bind(ShaderDomain::Vertex);
-
-		// TODO: Update camera
+		flatColorShader->Bind();
 
 		// Update camera properties
 		cameraUBO.Projection = sFpsCamera->GetProjection();
 		cameraUBO.View = sFpsCamera->GetViewMatrix();
+
+		// NOTE: DX11 uses transposed matrices.
+		if (Renderer::GetCurrentRenderingAPI()->GetType() == RenderingAPIType::DirectX11)
+		{
+			cameraUBO.Projection = glm::transpose(cameraUBO.Projection);
+			cameraUBO.View = glm::transpose(cameraUBO.View);
+		}
+
 		uniformBufferSet->GetUniform(0)->SetData(&cameraUBO, sizeof(GlobalUBO), 0);
 
 		// Update Model data

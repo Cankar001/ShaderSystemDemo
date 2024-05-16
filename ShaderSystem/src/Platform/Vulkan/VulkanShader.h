@@ -13,7 +13,7 @@ namespace ShaderSystem
 		VulkanShader(const BufferLayout &inLayout);
 		virtual ~VulkanShader();
 
-		virtual void Bind(ShaderDomain inDomain) const override;
+		virtual void Bind() const override;
 		virtual void Unbind() override;
 		virtual uint32_t GetRendererID() const override;
 

@@ -1,5 +1,7 @@
 #include "DX11IndexBuffer.h"
 
+#include "Core/Logger.h"
+
 namespace ShaderSystem
 {
 	DX11IndexBuffer::DX11IndexBuffer(const std::vector<int32_t> &inIndices)
@@ -18,9 +20,13 @@ namespace ShaderSystem
 
 		D3D11_SUBRESOURCE_DATA vbdata;
 		ZeroMemory(&vbdata, sizeof(D3D11_SUBRESOURCE_DATA));
-		vbdata.pSysMem = &inIndices[0];
+		vbdata.pSysMem = inIndices.data();
 
-		DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		HRESULT hr = DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		if (FAILED(hr))
+		{
+			SHADER_SYSTEM_ERROR("Failed to create index buffer!");
+		}
 	}
 
 	DX11IndexBuffer::DX11IndexBuffer(const void *inData, uint32_t inSize)
@@ -39,9 +45,13 @@ namespace ShaderSystem
 
 		D3D11_SUBRESOURCE_DATA vbdata;
 		ZeroMemory(&vbdata, sizeof(D3D11_SUBRESOURCE_DATA));
-		vbdata.pSysMem = &inData;
+		vbdata.pSysMem = inData;
 
-		DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		HRESULT hr = DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		if (FAILED(hr))
+		{
+			SHADER_SYSTEM_ERROR("Failed to create index buffer!");
+		}
 	}
 	
 	DX11IndexBuffer::DX11IndexBuffer(uint32_t inSize)
@@ -58,7 +68,11 @@ namespace ShaderSystem
 		vbedsc.CPUAccessFlags = 0;
 		vbedsc.MiscFlags = 0;
 
-		DX11Resources::sDevice->CreateBuffer(&vbedsc, nullptr, mBuffer.GetAddressOf());
+		HRESULT hr = DX11Resources::sDevice->CreateBuffer(&vbedsc, nullptr, mBuffer.GetAddressOf());
+		if (FAILED(hr))
+		{
+			SHADER_SYSTEM_ERROR("Failed to create index buffer!");
+		}
 	}
 	
 	DX11IndexBuffer::~DX11IndexBuffer()
@@ -76,11 +90,21 @@ namespace ShaderSystem
 	
 	void DX11IndexBuffer::UpdateContents(const void *inData, uint32_t inSize, uint32_t inOffset)
 	{
-		// TODO: implement
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = DX11Resources::sDeviceContext->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (SUCCEEDED(hr))
+		{
+			memcpy(static_cast<char *>(mappedResource.pData) + inOffset, inData, inSize);
+			DX11Resources::sDeviceContext->Unmap(mBuffer.Get(), 0);
+		}
+		else
+		{
+			SHADER_SYSTEM_ERROR("Failed to update index data!");
+		}
 	}
 	
 	void DX11IndexBuffer::UpdateContents(const std::vector<int32_t> &inIndices, uint32_t inOffset)
 	{
-		// TODO: implement
+		UpdateContents(inIndices.data(), static_cast<uint32_t>(inIndices.size() * sizeof(int32_t)), inOffset);
 	}
 }

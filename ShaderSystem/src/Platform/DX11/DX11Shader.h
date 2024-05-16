@@ -16,7 +16,7 @@ namespace ShaderSystem
 		DX11Shader(const BufferLayout &inLayout);
 		virtual ~DX11Shader();
 
-		virtual void Bind(ShaderDomain inDomain) const override;
+		virtual void Bind() const override;
 		virtual void Unbind() override;
 		virtual uint32_t GetRendererID() const override;
 
@@ -38,8 +38,9 @@ namespace ShaderSystem
 		ComPtr<ID3D11DomainShader> mDomainShader	 = nullptr;
 		ComPtr<ID3D11HullShader> mHullShader		 = nullptr;
 
-		std::unordered_map<ShaderDomain, ComPtr<ID3D11InputLayout>> mInputLayouts;
-		
+		ComPtr<ID3D11InputLayout> mInputLayout;
+		std::vector<ShaderDomain> mShadersInUse;
+
 		D3D11_INPUT_ELEMENT_DESC *mLayoutElements	 = nullptr;
 		UINT mLayoutElementCount					 = 0;
 	};

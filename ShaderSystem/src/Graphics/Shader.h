@@ -32,7 +32,7 @@ namespace ShaderSystem
 		void Release();
 		uint64_t GetHash() const;
 
-		void Bind(ShaderDomain inDomain) const;
+		void Bind() const;
 		void Unbind();
 		uint32_t GetRendererID();
 

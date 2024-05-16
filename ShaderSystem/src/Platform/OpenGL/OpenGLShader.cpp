@@ -48,7 +48,7 @@ namespace ShaderSystem
 		ReleaseAllDomains();
 	}
 
-	void OpenGLShader::Bind(ShaderDomain inDomain) const
+	void OpenGLShader::Bind() const
 	{
 		glUseProgram(mProgramID);
 	}

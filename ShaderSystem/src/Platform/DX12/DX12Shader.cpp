@@ -10,7 +10,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	void DX12Shader::Bind(ShaderDomain inDomain) const
+	void DX12Shader::Bind() const
 	{
 	}
 

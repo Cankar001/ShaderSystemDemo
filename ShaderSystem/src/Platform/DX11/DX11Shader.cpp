@@ -87,6 +87,7 @@ namespace ShaderSystem
 		UINT offset = 0;
 		for (const auto &element : inLayout)
 		{
+		//	mLayoutElements[i].SemanticName = element.Name.c_str();
 			mLayoutElements[i].SemanticName = "TEXCOORD"; // HACK: every name is called TEXCOORD in the SPIR-V parser
 			mLayoutElements[i].SemanticIndex = i;
 			mLayoutElements[i].Format = utils::BufferTypeToDX11Type(element.Type);
@@ -105,38 +106,38 @@ namespace ShaderSystem
 		delete[] mLayoutElements;
 	}
 	
-	void DX11Shader::Bind(ShaderDomain inDomain) const
+	void DX11Shader::Bind() const
 	{
-		if (inDomain == ShaderDomain::Vertex)
+		for (auto &inUseDomain : mShadersInUse)
 		{
-			DX11Resources::sDeviceContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
-		}
-		else if (inDomain == ShaderDomain::Fragment)
-		{
-			DX11Resources::sDeviceContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
-		}
-		else if (inDomain == ShaderDomain::Compute)
-		{
-			DX11Resources::sDeviceContext->CSSetShader(mComputeShader.Get(), nullptr, 0);
-		}
-		else if (inDomain == ShaderDomain::Geometry)
-		{
-			DX11Resources::sDeviceContext->GSSetShader(mGeometryShader.Get(), nullptr, 0);
-		}
-		else if (inDomain == ShaderDomain::TessControl)
-		{
-			DX11Resources::sDeviceContext->HSSetShader(mHullShader.Get(), nullptr, 0);
-		}
-		else if (inDomain == ShaderDomain::TessEvalulation)
-		{
-			DX11Resources::sDeviceContext->DSSetShader(mDomainShader.Get(), nullptr, 0);
+			if (inUseDomain == ShaderDomain::Vertex)
+			{
+				DX11Resources::sDeviceContext->VSSetShader(mVertexShader.Get(), nullptr, 0);
+			}
+			else if (inUseDomain == ShaderDomain::Fragment)
+			{
+				DX11Resources::sDeviceContext->PSSetShader(mPixelShader.Get(), nullptr, 0);
+			}
+			else if (inUseDomain == ShaderDomain::Compute)
+			{
+				DX11Resources::sDeviceContext->CSSetShader(mComputeShader.Get(), nullptr, 0);
+			}
+			else if (inUseDomain == ShaderDomain::Geometry)
+			{
+				DX11Resources::sDeviceContext->GSSetShader(mGeometryShader.Get(), nullptr, 0);
+			}
+			else if (inUseDomain == ShaderDomain::TessControl)
+			{
+				DX11Resources::sDeviceContext->HSSetShader(mHullShader.Get(), nullptr, 0);
+			}
+			else if (inUseDomain == ShaderDomain::TessEvalulation)
+			{
+				DX11Resources::sDeviceContext->DSSetShader(mDomainShader.Get(), nullptr, 0);
+			}
 		}
 
-		auto it = mInputLayouts.find(inDomain);
-		if (it != mInputLayouts.end())
-		{
-			DX11Resources::sDeviceContext->IASetInputLayout(it->second.Get());
-		}
+		if (mInputLayout)
+			DX11Resources::sDeviceContext->IASetInputLayout(mInputLayout.Get());
 	}
 	
 	void DX11Shader::Unbind()
@@ -268,13 +269,18 @@ namespace ShaderSystem
 			}
 		}
 
-		hr = DX11Resources::sDevice->CreateInputLayout(mLayoutElements, mLayoutElementCount, blob->GetBufferPointer(), blob->GetBufferSize(), mInputLayouts[inDomain].ReleaseAndGetAddressOf());
-		if (FAILED(hr))
+		if (inDomain == ShaderDomain::Vertex)
 		{
-			SHADER_SYSTEM_ERROR("Failed to create the input layout");
+			SHADER_SYSTEM_INFO("Creating vertex input layout for vertex shader...");
+			hr = DX11Resources::sDevice->CreateInputLayout(mLayoutElements, mLayoutElementCount, blob->GetBufferPointer(), blob->GetBufferSize(), mInputLayout.ReleaseAndGetAddressOf());
+			if (FAILED(hr))
+			{
+				SHADER_SYSTEM_ERROR("Failed to create the input layout!");
+			}
 		}
 
 		mTextDomains[inDomain] = inSourceString;
+		mShadersInUse.push_back(inDomain);
 	}
 
 	const std::string &DX11Shader::GetShaderDomainSource(ShaderDomain inDomain) const
@@ -353,13 +359,17 @@ namespace ShaderSystem
 			SHADER_SYSTEM_ASSERT(false);
 		}
 
-		HRESULT hr = DX11Resources::sDevice->CreateInputLayout(mLayoutElements, mLayoutElementCount, inSourceBinary.data(), bufferSize, mInputLayouts[inDomain].ReleaseAndGetAddressOf());
-		if (FAILED(hr))
+		if (inDomain == ShaderDomain::Vertex)
 		{
-			SHADER_SYSTEM_ERROR("Failed to create the input layout");
+			HRESULT hr = DX11Resources::sDevice->CreateInputLayout(mLayoutElements, mLayoutElementCount, inSourceBinary.data(), bufferSize, mInputLayout.ReleaseAndGetAddressOf());
+			if (FAILED(hr))
+			{
+				SHADER_SYSTEM_ERROR("Failed to create the input layout");
+			}
 		}
 
 		mBinaryDomains[inDomain] = inSourceBinary;
+		mShadersInUse.push_back(inDomain);
 	}
 
 	const std::vector<uint32_t> &DX11Shader::GetShaderDomainBinary(ShaderDomain inDomain) const

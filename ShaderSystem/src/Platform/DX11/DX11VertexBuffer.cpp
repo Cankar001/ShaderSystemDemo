@@ -1,5 +1,7 @@
 #include "DX11VertexBuffer.h"
 
+#include "Core/Logger.h"
+
 namespace ShaderSystem
 {
 	DX11VertexBuffer::DX11VertexBuffer(void *inData, uint32_t inSize)
@@ -18,9 +20,13 @@ namespace ShaderSystem
 
 		D3D11_SUBRESOURCE_DATA vbdata;
 		ZeroMemory(&vbdata, sizeof(D3D11_SUBRESOURCE_DATA));
-		vbdata.pSysMem = &inData;
+		vbdata.pSysMem = inData;
 
-		DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		HRESULT hr = DX11Resources::sDevice->CreateBuffer(&vbedsc, &vbdata, mBuffer.GetAddressOf());
+		if (FAILED(hr))
+		{
+			SHADER_SYSTEM_ERROR("Failed to create the vertex buffer!");
+		}
 	}
 
 	DX11VertexBuffer::DX11VertexBuffer(uint32_t inSize)
@@ -49,6 +55,9 @@ namespace ShaderSystem
 	void DX11VertexBuffer::Bind() const
 	{
 		// NOTE: not used by dx11
+		UINT offset = 0;
+		UINT stride = *mStride;
+		DX11Resources::sDeviceContext->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);
 	}
 	
 	void DX11VertexBuffer::Unbind() const
@@ -58,6 +67,16 @@ namespace ShaderSystem
 	
 	void DX11VertexBuffer::UpdateContents(void *inData, uint32_t inSize, uint32_t inOffset)
 	{
-		// TODO: implement
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT hr = DX11Resources::sDeviceContext->Map(mBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		if (SUCCEEDED(hr))
+		{
+			memcpy(static_cast<char *>(mappedResource.pData) + inOffset, inData, inSize);
+			DX11Resources::sDeviceContext->Unmap(mBuffer.Get(), 0);
+		}
+		else
+		{
+			SHADER_SYSTEM_ERROR("Failed to update the vertex data!");
+		}
 	}
 }

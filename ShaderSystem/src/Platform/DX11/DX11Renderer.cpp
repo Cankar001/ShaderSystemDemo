@@ -47,9 +47,8 @@ namespace ShaderSystem
 	
 	void DX11Renderer::EndFrame(uint32_t inIndexCount)
 	{
-		// TODO: Implement shader first
 		// Draw to screen
-	//	DX11Resources::sDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//	DX11Resources::sDeviceContext->DrawIndexed(inIndexCount, 0, 0);
+		DX11Resources::sDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		DX11Resources::sDeviceContext->DrawIndexed(inIndexCount, 0, 0);
 	}
 }

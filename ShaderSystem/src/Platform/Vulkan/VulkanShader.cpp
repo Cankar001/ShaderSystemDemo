@@ -10,7 +10,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	void VulkanShader::Bind(ShaderDomain inDomain) const
+	void VulkanShader::Bind() const
 	{
 	}
 	

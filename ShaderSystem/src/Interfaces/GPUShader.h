@@ -15,7 +15,7 @@ namespace ShaderSystem
 
 		virtual ~GPUShader() {}
 
-		virtual void Bind(ShaderDomain inDomain) const = 0;
+		virtual void Bind() const = 0;
 		virtual void Unbind() = 0;
 		virtual uint32_t GetRendererID() const = 0;
 

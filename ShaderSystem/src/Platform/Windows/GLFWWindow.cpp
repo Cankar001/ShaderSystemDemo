@@ -228,6 +228,11 @@ namespace ShaderSystem
 		return mNativeCursor;
 	}
 
+	float GLFWWindow::GetTime() const
+	{
+		return (float)glfwGetTime();
+	}
+
 	void GLFWWindow::Init()
 	{
 		uint32_t width = 0, height = 0;

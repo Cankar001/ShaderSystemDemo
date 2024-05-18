@@ -2,6 +2,7 @@
 
 #include "Core/Logger.h"
 #include "Core/FileSystem.h"
+#include "Core/Input.h"
 #include "Window/Window.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/FPSCamera.h"
@@ -80,16 +81,16 @@ int main(int argc, char* argv[])
 	vertices[0].TexCoord = glm::vec2(0.0f, 0.0f);
 	vertices[0].Color = quadColorRed;
 
-	vertices[1].Position = glm::vec3(-0.5f, 0.5f, 0.0f);
-	vertices[1].TexCoord = glm::vec2(0.0f, 0.0f);
+	vertices[1].Position = glm::vec3(0.5f, -0.5f, 0.0f);
+	vertices[1].TexCoord = glm::vec2(1.0f, 0.0f);
 	vertices[1].Color = quadColorGreen;
 
 	vertices[2].Position = glm::vec3(0.5f, 0.5f, 0.0f);
-	vertices[2].TexCoord = glm::vec2(0.0f, 0.0f);
+	vertices[2].TexCoord = glm::vec2(1.0f, 1.0f);
 	vertices[2].Color = quadColorBlue;
 
-	vertices[3].Position = glm::vec3(0.5f, -0.5f, 0.0f);
-	vertices[3].TexCoord = glm::vec2(0.0f, 0.0f);
+	vertices[3].Position = glm::vec3(-0.5f, 0.5f, 0.0f);
+	vertices[3].TexCoord = glm::vec2(0.0f, 1.0f);
 	vertices[3].Color = quadColorYellow;
 
 	int32_t indices[] = {
@@ -125,17 +126,25 @@ int main(int argc, char* argv[])
 	uniformBufferSet->CreateUniform(sizeof(InstanceUBO), 1, instanceUboLayout);
 
 	// Vertex bindings
-	BufferLayout layout = {
-		BufferElement("a_Position", ShaderDataType::Float3, false),
-		BufferElement("a_TexCoord", ShaderDataType::Float2, false),
-		BufferElement("a_Color", ShaderDataType::Float4, false)
-	};
+	BufferLayout layout = BufferLayout::GetFlatColorShaderLayout();
 	vao->Bind(layout);
 
+	float frameTime = 0.0f;
+	float lastFrameTime = 0.0f;
+	float deltaTime = 1.0f;
 	sRunning = true;
 	while (sRunning)
 	{
 		mainWindow->SetTitle("ShaderSystem Demo [Current Renderer: " + Renderer::GetCurrentRenderingAPI()->ToString() + "]");
+
+		Input::Update(); // NOTE: Does nothing for keyboards, would do actions for controllers.
+
+		if (Input::IsKeyPressed(256)) // Escape
+		{
+			break;
+		}
+
+		sFpsCamera->UpdateControls(deltaTime);
 
 		Renderer::BeginFrame(mainWindow->GetWidth(), mainWindow->GetHeight(), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));
 
@@ -150,6 +159,7 @@ int main(int argc, char* argv[])
 		// NOTE: DX11 uses transposed matrices.
 		if (Renderer::GetCurrentRenderingAPI()->GetType() == RenderingAPIType::DirectX11)
 		{
+			cameraUBO.Projection[1][1] *= -1;
 			cameraUBO.Projection = glm::transpose(cameraUBO.Projection);
 			cameraUBO.View = glm::transpose(cameraUBO.View);
 		}
@@ -158,6 +168,11 @@ int main(int argc, char* argv[])
 
 		// Update Model data
 		instanceUBO.Model = glm::translate(glm::mat4(1.0f), {0.0f, 0.0f, 0.0f}) * glm::rotate(glm::mat4(1.0f), 90.0f, {0.0f, 1.0f, 0.0f}) * glm::scale(glm::mat4(1.0f), {2.0f, 2.0f, 2.0f});
+		if (Renderer::GetCurrentRenderingAPI()->GetType() == RenderingAPIType::DirectX11)
+		{
+			instanceUBO.Model = glm::transpose(instanceUBO.Model);
+		}
+
 		uniformBufferSet->GetUniform(1)->SetData(&instanceUBO, sizeof(InstanceUBO), 0);
 		
 		// Bind all uniforms
@@ -167,6 +182,11 @@ int main(int argc, char* argv[])
 		});
 
 		Renderer::EndFrame(ibo->GetCount());
+
+		float time = mainWindow->GetTime();
+		frameTime = time - lastFrameTime;
+		deltaTime = glm::min<float>(frameTime, 0.0333f);
+		lastFrameTime = time;
 
 		mainWindow->Update();
 	}

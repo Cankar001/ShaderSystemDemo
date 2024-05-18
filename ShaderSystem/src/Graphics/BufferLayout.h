@@ -91,6 +91,8 @@ namespace ShaderSystem
 		std::vector<BufferElement>::const_iterator begin() const { return mElements.begin(); }
 		std::vector<BufferElement>::const_iterator end() const { return mElements.end(); }
 
+		static BufferLayout GetFlatColorShaderLayout();
+
 	private:
 
 		void CalculateOffsetsAndStride();

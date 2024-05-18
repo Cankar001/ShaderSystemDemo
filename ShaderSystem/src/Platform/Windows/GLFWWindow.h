@@ -51,6 +51,8 @@ namespace ShaderSystem
 		virtual void* GetNativeContext() override;
 		virtual void* GetNativeCursor() override;
 
+		virtual float GetTime() const override;
+
 		virtual Ref<RenderingContext>& GetContext() override { return mContext; }
 		virtual const Ref<RenderingContext>& GetContext() const override { return mContext; }
 		virtual const WindowData& GetProperties() const override { return mWindowData; }

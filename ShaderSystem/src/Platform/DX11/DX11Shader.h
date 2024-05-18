@@ -38,10 +38,11 @@ namespace ShaderSystem
 		ComPtr<ID3D11DomainShader> mDomainShader	 = nullptr;
 		ComPtr<ID3D11HullShader> mHullShader		 = nullptr;
 
-		ComPtr<ID3D11InputLayout> mInputLayout;
+		ComPtr<ID3D11InputLayout> mInputLayout		 = nullptr;
 		std::vector<ShaderDomain> mShadersInUse;
 
 		D3D11_INPUT_ELEMENT_DESC *mLayoutElements	 = nullptr;
 		UINT mLayoutElementCount					 = 0;
+		uint32_t mRendererID						 = 0;
 	};
 }

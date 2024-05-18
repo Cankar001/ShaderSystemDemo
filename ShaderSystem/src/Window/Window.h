@@ -80,9 +80,11 @@ namespace ShaderSystem
 		virtual Ref<RenderingContext>& GetContext() = 0;
 		virtual const Ref<RenderingContext>& GetContext() const = 0;
 		virtual const WindowData& GetProperties() const = 0;
+		
+		virtual float GetTime() const = 0;
 
 		static Window& Get();
-		static UniqueRef<Window> Create(const WindowData& properties = WindowData());
+		static Ref<Window> Create(const WindowData& properties = WindowData());
 
 	protected:
 

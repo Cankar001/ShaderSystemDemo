@@ -1,5 +1,7 @@
 #include "FPSCamera.h"
 
+#include "Core/Input.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -23,7 +25,22 @@ namespace ShaderSystem
 	
 	void FPSCamera::UpdateControls(float inDeltaTime)
 	{
-		// TODO: If we want to enable camera controls, we will need the input system as well.
+		if (Input::IsKeyPressed(87)) // W
+		{
+			mPosition += GetUpDirection() * RunningSpeed() * inDeltaTime;
+		}
+		else if (Input::IsKeyPressed(83)) // S
+		{
+			mPosition -= GetUpDirection() * RunningSpeed() * inDeltaTime;
+		}
+		else if (Input::IsKeyPressed(65)) // A
+		{
+			mPosition -= GetRightDirection() * RunningSpeed() * inDeltaTime;
+		}
+		else if (Input::IsKeyPressed(68)) // D
+		{
+			mPosition += GetRightDirection() * RunningSpeed() * inDeltaTime;
+		}
 
 		UpdateCameraView();
 	}
@@ -64,6 +81,6 @@ namespace ShaderSystem
 
 	float FPSCamera::RunningSpeed() const
 	{
-		return 0.025f;
+		return 0.5f;
 	}
 }

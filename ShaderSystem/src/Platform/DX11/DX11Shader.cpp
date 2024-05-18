@@ -146,7 +146,7 @@ namespace ShaderSystem
 	
 	uint32_t DX11Shader::GetRendererID() const
 	{
-		return 0;
+		return mRendererID;
 	}
 	
 	void DX11Shader::ReleaseAllDomains()
@@ -157,6 +157,7 @@ namespace ShaderSystem
 	
 	bool DX11Shader::LinkAllShaders()
 	{
+		// NOTE: Nothing to do for DX11.
 		return true;
 	}
 

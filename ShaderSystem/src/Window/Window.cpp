@@ -11,12 +11,19 @@ namespace ShaderSystem
 		return *s_WindowInstance;
 	}
 
-	UniqueRef<Window> Window::Create(const WindowData& properties)
+	Ref<Window> Window::Create(const WindowData& properties)
 	{
 #if SHADER_SYSTEM_USE_NATIVE_WIN_API
-		return MakeUnique<WindowsWindow>(properties);
+		Ref<Window> window = MakeUnique<WindowsWindow>(properties);
 #else
-		return MakeUnique<GLFWWindow>(properties);
+		Ref<Window> window = MakeUnique<GLFWWindow>(properties);
 #endif
+
+		if (!s_WindowInstance)
+		{
+			s_WindowInstance = window.get();
+		}
+
+		return window;
 	}
 }

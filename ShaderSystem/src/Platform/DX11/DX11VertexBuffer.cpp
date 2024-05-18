@@ -54,7 +54,6 @@ namespace ShaderSystem
 	
 	void DX11VertexBuffer::Bind() const
 	{
-		// NOTE: not used by dx11
 		UINT offset = 0;
 		UINT stride = *mStride;
 		DX11Resources::sDeviceContext->IASetVertexBuffers(0, 1, mBuffer.GetAddressOf(), &stride, &offset);

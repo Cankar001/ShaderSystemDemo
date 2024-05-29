@@ -144,6 +144,33 @@ int main(int argc, char* argv[])
 			break;
 		}
 
+		// Handle renderer change
+		if (Input::IsKeyPressed(290)) // F1
+		{
+			Renderer::ChangeRendererBackend(RenderingAPIType::OpenGL);
+			mainWindow->RecreateContext();
+		}
+		else if (Input::IsKeyPressed(291)) // F2
+		{
+			Renderer::ChangeRendererBackend(RenderingAPIType::DirectX11);
+			mainWindow->RecreateContext();
+		}
+		else if (Input::IsKeyPressed(292)) // F3
+		{
+			Renderer::ChangeRendererBackend(RenderingAPIType::DirectX12);
+			mainWindow->RecreateContext();
+		}
+		else if (Input::IsKeyPressed(293)) // F4
+		{
+			Renderer::ChangeRendererBackend(RenderingAPIType::Vulkan);
+			mainWindow->RecreateContext();
+		}
+		else if (Input::IsKeyPressed(294)) // F5
+		{
+			Renderer::ChangeRendererBackend(RenderingAPIType::Metal);
+			mainWindow->RecreateContext();
+		}
+
 		sFpsCamera->UpdateControls(deltaTime);
 
 		Renderer::BeginFrame(mainWindow->GetWidth(), mainWindow->GetHeight(), glm::vec4(0.1f, 0.1f, 0.1f, 1.0f));

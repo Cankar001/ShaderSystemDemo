@@ -71,6 +71,17 @@ namespace ShaderSystem
 		glfwDestroyWindow(mNativeHandle);
 		glfwTerminate();
 	}
+
+	void GLFWWindow::RecreateContext()
+	{
+		if (mContext)
+		{
+			mContext = nullptr;
+		}
+
+		mContext = RenderingContext::Create((void*)mNativeHandle);
+		mContext->Init(mWindowData);
+	}
 	
 	void GLFWWindow::SetVSync(bool bEnabled)
 	{

@@ -43,6 +43,15 @@ namespace ShaderSystem
 		}
 	}
 
+	void Renderer::ChangeRendererBackend(RenderingAPIType inType)
+	{
+		Shutdown();
+
+		SelectRenderingBackend(inType);
+
+		Init();
+	}
+
 	void Renderer::BeginFrame(uint32_t inWindowWidth, uint32_t inWindowHeight, const glm::vec4 &inClearColor)
 	{
 		sGPURenderer->BeginFrame(inWindowWidth, inWindowHeight, inClearColor);

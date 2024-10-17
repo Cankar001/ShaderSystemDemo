@@ -51,6 +51,7 @@ namespace ShaderSystem
 		virtual std::pair<int32_t, int32_t> GetWindowDimensions() = 0;
 		virtual std::pair<int32_t, int32_t> GetWindowPosition() = 0;
 		virtual void CloseWindow() = 0;
+		virtual void RecreateContext() = 0;
 
 		virtual void SetVSync(bool bEnabled) = 0;
 		virtual void SetVisible(bool bVisible) = 0;

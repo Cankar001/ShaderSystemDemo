@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
 
 	// vertex buffer
 	Ref<VertexBuffer> vbo = VertexBuffer::Create(vertices, sizeof(Vertex) * 4);
-	// NOTE: As soon as the buffer object is created, the memory can be freed, because the impl does make a copy.
+	// NOTE: As soon as the buffer object is created, the memory can be freed, because the impl does make a copy and the data is uploaded to GPU right away.
 	delete[] vertices;
 
 	// Index buffer
@@ -185,8 +185,8 @@ int main(int argc, char* argv[])
 
 		float time = mainWindow->GetTime();
 		frameTime = time - lastFrameTime;
-		deltaTime = glm::min<float>(frameTime, 0.0333f);
 		lastFrameTime = time;
+		deltaTime = glm::min<float>(frameTime, 0.0333f);
 
 		mainWindow->Update();
 	}

@@ -36,7 +36,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	const std::string &MetalShader::GetShaderDomainSource(ShaderDomain inDomain) const
+	std::string MetalShader::GetShaderDomainSource(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, s] : mTextDomains)
 		{
@@ -53,7 +53,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	const std::vector<uint32_t> &MetalShader::GetShaderDomainBinary(ShaderDomain inDomain) const
+	std::vector<uint32_t> MetalShader::GetShaderDomainBinary(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, b] : mBinaryDomains)
 		{

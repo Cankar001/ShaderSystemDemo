@@ -284,7 +284,7 @@ namespace ShaderSystem
 		mShadersInUse.push_back(inDomain);
 	}
 
-	const std::string &DX11Shader::GetShaderDomainSource(ShaderDomain inDomain) const
+	std::string DX11Shader::GetShaderDomainSource(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, s] : mTextDomains)
 		{
@@ -373,7 +373,7 @@ namespace ShaderSystem
 		mShadersInUse.push_back(inDomain);
 	}
 
-	const std::vector<uint32_t> &DX11Shader::GetShaderDomainBinary(ShaderDomain inDomain) const
+	std::vector<uint32_t> DX11Shader::GetShaderDomainBinary(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, b] : mBinaryDomains)
 		{

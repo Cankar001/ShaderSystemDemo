@@ -36,7 +36,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	const std::string &DX12Shader::GetShaderDomainSource(ShaderDomain inDomain) const
+	std::string DX12Shader::GetShaderDomainSource(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, s] : mTextDomains)
 		{
@@ -53,7 +53,7 @@ namespace ShaderSystem
 	{
 	}
 	
-	const std::vector<uint32_t> &DX12Shader::GetShaderDomainBinary(ShaderDomain inDomain) const
+	std::vector<uint32_t> DX12Shader::GetShaderDomainBinary(ShaderDomain inDomain) const
 	{
 		for (const auto &[d, b] : mBinaryDomains)
 		{

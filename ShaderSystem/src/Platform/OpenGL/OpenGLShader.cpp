@@ -141,7 +141,7 @@ namespace ShaderSystem
 		 mShaderHandles[inDomain] = shaderId;
 	}
 	
-	const std::string& OpenGLShader::GetShaderDomainSource(ShaderDomain inDomain) const
+	std::string OpenGLShader::GetShaderDomainSource(ShaderDomain inDomain) const
 	{
 		for (const auto& [d, s] : mTextDomains)
 		{
@@ -184,7 +184,7 @@ namespace ShaderSystem
 		mShaderHandles[inDomain] = shaderId;
 	}
 	
-	const std::vector<uint32_t>& OpenGLShader::GetShaderDomainBinary(ShaderDomain inDomain) const
+	std::vector<uint32_t> OpenGLShader::GetShaderDomainBinary(ShaderDomain inDomain) const
 	{
 		for (const auto& [d, b] : mBinaryDomains)
 		{

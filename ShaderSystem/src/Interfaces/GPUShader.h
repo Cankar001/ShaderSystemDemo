@@ -23,10 +23,10 @@ namespace ShaderSystem
 		virtual bool LinkAllShaders() = 0;
 
 		virtual void AddShaderDomain(const std::string &inSourceString, ShaderDomain inDomain) = 0;
-		virtual const std::string& GetShaderDomainSource(ShaderDomain inDomain) const = 0;
+		virtual std::string GetShaderDomainSource(ShaderDomain inDomain) const = 0;
 
 		virtual void AddShaderDomain(const std::vector<uint32_t>& inSourceBinary, ShaderDomain inDomain) = 0;
-		virtual const std::vector<uint32_t>& GetShaderDomainBinary(ShaderDomain inDomain) const = 0;
+		virtual std::vector<uint32_t> GetShaderDomainBinary(ShaderDomain inDomain) const = 0;
 
 		static Ref<GPUShader> Create(const BufferLayout &inLayout);
 

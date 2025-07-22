@@ -21,10 +21,10 @@ namespace ShaderSystem
 		virtual bool LinkAllShaders() override;
 
 		virtual void AddShaderDomain(const std::string& inSourceString, ShaderDomain inDomain) override;
-		virtual const std::string& GetShaderDomainSource(ShaderDomain inDomain) const override;
+		virtual std::string GetShaderDomainSource(ShaderDomain inDomain) const override;
 
 		virtual void AddShaderDomain(const std::vector<uint32_t>& inSourceBinary, ShaderDomain inDomain) override;
-		virtual const std::vector<uint32_t>& GetShaderDomainBinary(ShaderDomain inDomain) const override;
+		virtual std::vector<uint32_t> GetShaderDomainBinary(ShaderDomain inDomain) const override;
 
 	private:
 
